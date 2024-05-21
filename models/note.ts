@@ -4,7 +4,7 @@ const noteSchema = new Schema(
   {
     title: {
       type: String,
-      required: true,
+      required: false,
     },
     content: {
       type: String,
@@ -17,6 +17,10 @@ const noteSchema = new Schema(
     folder: {
       type: mongoose.Schema.Types.ObjectId, 
       ref: 'Folder',
+      required: false,
+    },
+    favourite: {
+      type: Boolean,
       required: false,
     },
     createdBy: {
