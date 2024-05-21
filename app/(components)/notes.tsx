@@ -1,19 +1,38 @@
 "use client"
 
-import React, {useEffect, useState} from 'react'
-import { Button, useDisclosure, Breadcrumbs, BreadcrumbItem } from "@nextui-org/react";
-import Modal from './modal'
-import Tab from '@/app/(components)/tab';
-import NoteForm from './note-form';
+import React, {useEffect, useState} from 'react';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
-import RichTextEditor from './rich-text-editor';
+import { usePathname } from 'next/navigation';
+import parse from 'html-react-parser';
+import generateColorFromText from '@/utils/generateColorFromText';
 
-const Notes = ({ notes, id }: {notes: any, id?: string}) => {
-  const {isOpen, onOpen, onClose} = useDisclosure();
-  const [note, setNote] = useState<any>({});
+const NoteList = ({ notes, folderId }: { notes: any, folderId : string | undefined}) => {
   const pathname = usePathname();
-  const router = useRouter();
+
+  return (
+    <ul className='flex flex-wrap gap-4'>
+      {notes.map((note: any, index: number) => (
+        <li 
+        style={{ backgroundColor : generateColorFromText(note._id)}} 
+        key={index} 
+        className='text-left cursor-pointer w-72 h-72 rounded-md relative'
+        >
+          {note.favourite && <i className='ri-star-fill text-black absolute bottom-4 right-4'></i>}
+          <Link href={`/notes/${note._id}`} className={`block p-2 w-full h-full ${pathname === `/notes/${note._id}` ? 'bg-gray-200 p-1 rounded' : ''}`}>
+            <div className='text-xs mt-4 h- w-full line-clamp-6'>{note.content ? parse(`${note.content}`) : ""}</div>
+          </Link>
+        </li>
+      ))}
+      <Link href={folderId ? `/folders/${folderId}/create`:  '/notes/create'} className='w-72 h-72 bg-gray-300 flex flex-col items-center justify-center rounded-md'>
+        <i className="ri-add-fill text-7xl text-gray-500"></i>
+      </Link>
+    </ul>
+  )
+}
+
+
+const Notes = ({ notes, id, folderId }: {notes: any, id?: string, folderId?: string}) => {
+  const [note, setNote] = useState<any>({});
 
   useEffect(() => {
     async function fetchSingleNote(id: string | undefined) {
@@ -33,50 +52,20 @@ const Notes = ({ notes, id }: {notes: any, id?: string}) => {
         console.log(error)
       }
     }
-    fetchSingleNote(id)
+
+    if(id) {
+      fetchSingleNote(id)
+    }
   }, [id])
 
   return (
-    <>
-      <div className='flex w-full h-screen'>
-        <div className='w-full max-w-xs border-r p-2 space-y-6'>
-          <div className="flex justify-between items-center">
-            <h2 className='text-xl capitalize'>your notes</h2>
-            <Button className='bg-transparent' isIconOnly onPress={onOpen}>
-              <i className="ri-file-add-line text-xl"></i>
-            </Button> 
-          </div>
-          <ul className='space-y-2'>
-            {notes.map((note: any, index: number) => (
-              <li key={index} className='w-full cursor-pointer'>
-                <Link href={`/notes/${note._id}`} className={`link block py-2 w-full hover:bg-gray-300 ${pathname === `/notes/${note._id}` ? 'bg-gray-200 p-1 rounded' : ''}`}>{note.title}</Link>
-              </li>
-            ))}
-          </ul>
+    <> 
+      <div className='w-full h-screen'>
+        <div className='flex items-center gap-2 my-2 mb-8'>  
+          <h1 className='text-4xl font-medium'>Notes</h1>
         </div>
-        <div className="w-full max-w-screen-lg p-4">
-          <div className="flex justify-between px-8 items-center">
-            <div></div>
-            <Breadcrumbs>
-              <BreadcrumbItem startContent={note.folder ? <i className="ri-folder-line"/> : <i className="ri-file-line"/>} endContent={note.folder && <i className="ri-arrow-right-s-line"></i>}>
-                {note.folder ? <span>{note.folder}</span> :  <span>{note.title}</span>}
-              </BreadcrumbItem>
-            </Breadcrumbs>
-            <div className='space-x-3'>
-              <button><i className="ri-tools-fill"></i></button>
-              <button><i className="ri-more-2-fill"></i></button>
-              <Button color="primary" className='rounded-none'>
-                Share
-              </Button>
-            </div>
-          </div>
-        <h1 className='text-4xl font-bold capitalize my-8'>{note.title}</h1>
-          <RichTextEditor initialContent={note.content} noteId={note._id}/>
-        </div>
+        <NoteList notes={notes} folderId={folderId}/>
       </div>
-      <Modal onClose={onClose} isOpen={isOpen} title='Create Note'>
-        <NoteForm onClose={onClose}/>
-      </Modal>
     </>
   )
 }
