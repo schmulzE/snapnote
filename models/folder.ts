@@ -2,9 +2,14 @@ import mongoose, { Schema, models } from "mongoose";
 
 const folderSchema = new Schema(
   {
-    title: {
+    name: {
       type: String,
       required: true,
+    },
+    tag: {
+      type: mongoose.Schema.Types.ObjectId, 
+      ref: 'Tag',
+      required: false,
     },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId, 
