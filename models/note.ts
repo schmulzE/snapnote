@@ -1,5 +1,16 @@
 import mongoose, { Schema, models } from "mongoose";
 
+export interface Note {
+  _id?: string;
+  title?: string;
+  content?: string;
+  createdBy?: string;
+  folder?: string;
+  favourite?: boolean;
+  image?: string;
+  tag?: string;
+}
+
 const noteSchema = new Schema(
   {
     title: {
@@ -32,5 +43,5 @@ const noteSchema = new Schema(
   { timestamps: true }
 );
 
-const Note = models.Note || mongoose.model("Note", noteSchema);
-export default Note;
+const NoteModel = models.Note || mongoose.model("Note", noteSchema);
+export default NoteModel;

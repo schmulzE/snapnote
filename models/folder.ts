@@ -1,5 +1,10 @@
 import mongoose, { Schema, models } from "mongoose";
 
+export interface Folder {
+  name: string;
+  tag?: string;
+  createdBy?: string;
+}
 const folderSchema = new Schema(
   {
     name: {
@@ -20,5 +25,5 @@ const folderSchema = new Schema(
   { timestamps: true }
 );
 
-const Folder = models.Folder || mongoose.model("Folder", folderSchema);
-export default Folder;
+const FolderModel = models.Folder || mongoose.model("Folder", folderSchema);
+export default FolderModel;

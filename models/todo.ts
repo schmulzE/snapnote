@@ -1,5 +1,15 @@
 import mongoose, { Schema, models } from "mongoose";
 
+export interface Todo {
+  _id?: string;
+  title?: string;
+  description?: string;
+  dueDate?: string | null;
+  isCompleted?: boolean;
+  tag?: string;
+  createdBy?: string;
+}
+
 const todoSchema = new Schema(
   {
     title: {
@@ -32,5 +42,5 @@ const todoSchema = new Schema(
   { timestamps: true }
 );
 
-const Todo = models.Todo || mongoose.model("Todo", todoSchema);
-export default Todo;
+const TodoModel = models.Todo || mongoose.model("Todo", todoSchema);
+export default TodoModel;

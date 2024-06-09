@@ -1,4 +1,9 @@
 import mongoose, { Schema, models } from "mongoose";
+export interface Tag {
+  _id?: string;
+  name?: string;
+  createdBy?: string;
+}
 
 const tagSchema = new Schema(
   {
@@ -15,5 +20,5 @@ const tagSchema = new Schema(
   { timestamps: true }
 );
 
-const Tag = models.Tag || mongoose.model("Tag", tagSchema);
-export default Tag;
+const TagModel = models.Tag || mongoose.model("Tag", tagSchema);
+export default TagModel;
