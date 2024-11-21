@@ -19,11 +19,9 @@ export async function createTag(prevState: any, formData : FormData) {
   })
 
   if(!parse.success) {
-    console.log(parse.error)
     return { message: 'data is not valid' };
   }
   const data = parse.data;
-  console.log('data', data);
   try {
     await connectMongoDB();
     await TagModel.create(data);
@@ -38,4 +36,15 @@ export async function getTags(): Promise<Tag[]> {
   const data = (await TagModel.find({}));
   const tags = JSON.parse(JSON.stringify(data)) as Tag[];
   return tags;
+}
+export async function deleteTag(id: string) {
+  try{
+    await connectMongoDB();
+    const tag = await TagModel.findById(id);
+    if (tag) {
+      await TagModel.findByIdAndDelete(id);
+    }
+  } catch (error) {
+    return { message: 'failed to delete tag' };
+  }
 }
