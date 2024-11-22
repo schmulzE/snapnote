@@ -9,6 +9,7 @@ export interface Note {
   favourite?: boolean;
   image?: string;
   tag?: string;
+  createdAt? : string;
 }
 
 const noteSchema = new Schema(
@@ -27,7 +28,12 @@ const noteSchema = new Schema(
     },
     folder: {
       type: mongoose.Schema.Types.ObjectId, 
-      ref: 'Folder',
+      ref: 'FolderModel',
+      required: false,
+    },
+    tag: {
+      type: mongoose.Schema.Types.ObjectId, 
+      ref: 'TagModel',
       required: false,
     },
     favourite: {
