@@ -30,12 +30,12 @@ const todoSchema = new Schema(
     },
     tag: {
       type: mongoose.Schema.Types.ObjectId, 
-      ref: 'Tag',
+      ref: 'TagModel',
       required: false,
     },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId, 
-      ref: 'User',
+      ref: 'UserModel',
       required: true,
     },
   },
