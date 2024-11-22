@@ -1,11 +1,13 @@
 import React from 'react';
-import Favourites from '../(components)/favourites';
+import { getFavouriteNotes } from '@/actions/notes';
+import NoteViewer from '@/app/components/notes/notesViewer';
 
-const pages = () => {
+const pages = async() => {
+
   return (
-    <div>
-      <Favourites/>
-    </div>
+    <>
+      <NoteViewer fetchNotes={getFavouriteNotes} title={'favourites'}/>
+    </>
   )
 }
 
