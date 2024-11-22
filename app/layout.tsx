@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-
+import 'remixicon/fonts/remixicon.css';
+import { AuthProvider } from "./provider";
 const inter = Inter({ subsets: ["latin"] });
+import NextTopLoader from 'nextjs-toploader';
+import { Toaster } from 'sonner';
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -16,7 +19,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <Toaster richColors/>
+        <NextTopLoader />
+        <AuthProvider>{children}</AuthProvider>
+      </body>
     </html>
   );
 }
