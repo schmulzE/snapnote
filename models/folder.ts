@@ -1,24 +1,26 @@
 import mongoose, { Schema, models } from "mongoose";
 
 export interface Folder {
+  _id?: string;
   name: string;
-  tag?: string;
   createdBy?: string;
+  favourite?: string;
+  createdAt?: string;
 }
+
 const folderSchema = new Schema(
   {
     name: {
       type: String,
       required: true,
     },
-    tag: {
-      type: mongoose.Schema.Types.ObjectId, 
-      ref: 'Tag',
+    favorite: {
+      type: Boolean, 
       required: false,
     },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId, 
-      ref: 'User',
+      ref: 'UserModel',
       required: true,
     },
   },
