@@ -1,8 +1,10 @@
 "use server"
 
 import { z } from 'zod';
+import mongoose from 'mongoose';
 import TagModel from '@/models/tag';
 import UserModel from '@/models/user';
+import FolderModel from '@/models/folder';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { getServerSession } from 'next-auth';
@@ -341,6 +343,48 @@ export const getTaggedNotes = async( page: number = 1, limit: number = 9, params
       totalNotes
     }
 
+  } catch (error: any) {
+    throw new Error(`Failed to fetch notes: ${error.message}`);
+  }
+}
+
+export const getNoteByFolderId = async (page: number = 1, limit: number = 9, folderId?: string) => {
+  try {
+    await connectMongoDB();
+
+    const session = await getServerSession(authOptions);
+    
+    if (!session?.user.id) {
+      throw new Error("Unauthorized");
+    }
+
+    const skip = (page - 1) * limit
+    const data = await FolderModel.aggregate([
+      {
+        $match: { _id: new mongoose.Types.ObjectId(folderId) },
+      },
+      {
+        $lookup: {
+          from: 'notes',
+          localField: '_id',
+          foreignField: 'folder',
+          as: 'notes',
+        },
+      },
+    ])
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit)
+
+
+    const totalNotes = await NoteModel.countDocuments({ createdBy: session.user.id })
+    const folder = JSON.parse(JSON.stringify(data[0]));
+
+    return {
+      notes: folder.notes,
+      hasMore: totalNotes > skip + folder.notes.length,
+      totalNotes
+    }
   } catch (error: any) {
     throw new Error(`Failed to fetch notes: ${error.message}`);
   }
