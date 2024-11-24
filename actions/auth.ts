@@ -28,14 +28,14 @@ export const createUser = async(prevState: any, formData: FormData) => {
     const user = await userExist(data.email);
 
     if (user) {
-      throw new Error ('User already exists')
+      return { message: "User already exists.", success: false }
     }
 
     const hashedPassword = await bcrypt.hash(data.password, 10);
     await UserModel.create({ ...data, password: hashedPassword });
-    return { message: 'User created successfully' }
+    return { message: "User registered successfully!", success: true }
   } catch (error) {
-    return { message: 'failed to create user' };
+    return { message: "An error occurred during registration.", success: false }
   }
 }
 
