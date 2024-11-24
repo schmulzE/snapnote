@@ -5,14 +5,13 @@ import mongoose from 'mongoose';
 import TagModel from '@/models/tag';
 import UserModel from '@/models/user';
 import FolderModel from '@/models/folder';
-import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { getServerSession } from 'next-auth';
 import { connectMongoDB } from '@/lib/mongodb';
 import NoteModel, { Note } from '@/models/note';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 
-export async function createNote(prevState: any, formData : Note) {
+export async function createNote(formData : Note) {
   const schema = z.object({
     title: z.string().optional(),
     content: z.string().min(3).optional(),
@@ -41,15 +40,13 @@ export async function createNote(prevState: any, formData : Note) {
 
   if(!parse.success) {
     return { success: false, message: 'Data is not valid' }
-    // return { message: 'data is not valid' };
   }
   const data = parse.data;
   try {
     await connectMongoDB();
     await NoteModel.create(data);
     revalidatePath('/notes')
-    redirect('/notes')
-    // return { message: 'Note created successfully' }
+    return { success: false, message: 'Note created successfully' }
   } catch (error) {
     return { success: false, message: 'Failed to edit note' }
   }
@@ -86,19 +83,19 @@ export async function editNote(formData: Note, id: string) {
   })
 
   if(!parse.success) {
-    return { message: 'data is not valid' };
+    return { success: false, message: 'data is not valid' };
   }
 
   const data = parse.data;
   try {
     await connectMongoDB();
-    const note = await NoteModel.findByIdAndUpdate(id, {
+    await NoteModel.findByIdAndUpdate(id, {
       ...data,
     });
     revalidatePath(`/notes/${id}`);
-    redirect(`/notes/${id}`)
+    return { success: true, message: 'Note updated successfully' };
   } catch (error) {
-    return { message: 'failed to create note' };
+    return { success: false, message: 'failed to create note' };
   }
 }
 
@@ -119,10 +116,10 @@ export async function getNotes(page: number = 1, limit: number = 9) {
       path: 'tag',
       model: 'Tag'
     })
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit)
-      .lean()
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit)
+    .lean()
 
     const totalNotes = await NoteModel.countDocuments({ createdBy: session.user.id })
 
@@ -176,14 +173,13 @@ export const addNoteToFavourite = async(id: string, isFavourite: boolean) => {
   })
 
   if(!parse.success) {
-    console.log(parse.error)
     return { message: 'data is not valid' };
   }
 
   const data = parse.data;
   try {
     await connectMongoDB();
-    const note = await NoteModel.findByIdAndUpdate(id, {
+    await NoteModel.findByIdAndUpdate(id, {
       ...data,
     });
     revalidatePath('/notes');
@@ -248,14 +244,13 @@ export const selectNoteTag = async(id: string, formData: FormData) => {
   })
 
   if(!parse.success) {
-    console.log(parse.error)
     return { message: 'data is not valid' };
   }
 
   const data = parse.data;
   try {
     await connectMongoDB();
-    const note = await NoteModel.findByIdAndUpdate(id, {
+    await NoteModel.findByIdAndUpdate(id, {
       ...data,
     });
     revalidatePath('folders');
@@ -293,10 +288,10 @@ export async function getFavouriteNotes(page: number = 1, limit: number = 9) {
       path: 'tag',
       model: 'Tag'
     })
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit)
-      .lean()
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit)
+    .lean()
 
     const totalNotes = await NoteModel.countDocuments({ createdBy: session.user.id })
 
@@ -350,18 +345,35 @@ export const getTaggedNotes = async( page: number = 1, limit: number = 9, params
 
 export const getNoteByFolderId = async (page: number = 1, limit: number = 9, folderId?: string) => {
   try {
-    await connectMongoDB();
 
+    if (!folderId) {
+      throw new Error("Folder ID is required.");
+    }
+    
+    await connectMongoDB();
     const session = await getServerSession(authOptions);
     
     if (!session?.user.id) {
       throw new Error("Unauthorized");
     }
 
-    const skip = (page - 1) * limit
+    const skip = (page - 1) * limit;
+
+    // First check if folder exists
+    const folderExists = await FolderModel.findById(folderId);
+    if (!folderExists) {
+      return {
+        notes: [],
+        hasMore: false,
+        totalNotes: 0
+      };
+    }
+    
     const data = await FolderModel.aggregate([
       {
-        $match: { _id: new mongoose.Types.ObjectId(folderId) },
+        $match: {
+          _id: new mongoose.Types.ObjectId(folderId),
+        },
       },
       {
         $lookup: {
@@ -371,21 +383,60 @@ export const getNoteByFolderId = async (page: number = 1, limit: number = 9, fol
           as: 'notes',
         },
       },
-    ])
-    .sort({ createdAt: -1 })
-    .skip(skip)
-    .limit(limit)
+      {
+        $unwind: '$notes',
+      },
+      {
+        $lookup: {
+          from: 'tags',
+          localField: 'notes.tags',  // Assuming notes has a tags field with tag IDs
+          foreignField: '_id',
+          as: 'notes.tags',
+        },
+      },
+      {
+        $group: {
+          _id: '$_id',
+          notes: { $push: '$notes' }
+        }
+      },
+      {
+        $project: {
+          notes: {
+            $slice: [
+              { $sortArray: { input: "$notes", sortBy: { createdAt: -1 } } },
+              skip,
+              limit
+            ]
+          }
+        }
+      }
+    ]);
+    
+    // Count total notes for this specific folder
+    const totalNotes = await NoteModel.countDocuments({ 
+      folder: new mongoose.Types.ObjectId(folderId),
+      createdBy: session.user.id 
+    });
 
-
-    const totalNotes = await NoteModel.countDocuments({ createdBy: session.user.id })
-    const folder = JSON.parse(JSON.stringify(data[0]));
-
-    return {
-      notes: folder.notes,
-      hasMore: totalNotes > skip + folder.notes.length,
-      totalNotes
+    // Handle case where no results are found
+    if (!data || data.length === 0) {
+      return {
+        notes: [],
+        hasMore: false,
+        totalNotes: 0
+      };
     }
+
+    const folder = JSON.parse(JSON.stringify(data[0]));
+    
+    return {
+      notes: folder.notes || [],
+      hasMore: totalNotes > (skip + (folder.notes?.length || 0)),
+      totalNotes
+    };
+
   } catch (error: any) {
     throw new Error(`Failed to fetch notes: ${error.message}`);
   }
-}
+};
