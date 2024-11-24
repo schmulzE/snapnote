@@ -1,39 +1,22 @@
-import React from 'react'
-import Todos from '../(components)/todos'
-import TodoForm from '../(components)/todo-form';
-
-async function getTodos() {
-  try {
-    const res = await fetch(`http://localhost:3000/api/todos`,  {
-      cache: "no-store",
-    });
-   
-    if (!res.ok) {
-      throw new Error('Failed to fetch data')
-    }
-   
-    return res.json()
-    
-  } catch (error) {
-    console.log(error)
-  }
-}
+import React from 'react';
+import TodoList from '../components/todos/todoList';
+import TodoForm from '../components/todos/todoForm';
+import TodoModel, { Todo } from '@/models/todo';
+import { connectMongoDB } from '@/lib/mongodb';
 
 const Page = async() => {
-  const data = await getTodos();
-
-  // if (!data?.todos) {
-  //   return <p>No todo.</p>;
-  // }
-
-  const todos = data.todos;
+  await connectMongoDB()
+  const data = await TodoModel.find({});
+  const todos = JSON.parse(JSON.stringify(data)) as Todo[];
 
   return (
-    <div className='flex gap-x-4 w-full'>
-      <div className='flex-1'>
-        <Todos todos={todos}/>
+    <div className='flex gap-x-4 w-full h-full'>
+      <div className='w-full md:w-full lg:basis-3/5'>
+        <TodoList todos={todos}/>
       </div>
-      <TodoForm/>
+      <div className='hidden md:hidden lg:flex basis-2/5 h-screen'>
+        <TodoForm/>
+      </div>
     </div>
   )
 }
