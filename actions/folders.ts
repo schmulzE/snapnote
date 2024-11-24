@@ -29,32 +29,31 @@ export const deleteFolder = async(id: string) => {
   }
 }
 
-export const addFolderToFavourite = async(id: string, favourite: boolean) => {
-  const schema = z.object({
-    isFavourite: z.boolean().optional(),
-  })
+// export const addFolderToFavourite = async(id: string, favourite: boolean) => {
+//   const schema = z.object({
+//     isFavourite: z.boolean().optional(),
+//   })
 
-  const parse = schema.safeParse({
-    isFavourite: favourite
-  })
+//   const parse = schema.safeParse({
+//     isFavourite: favourite
+//   })
 
-  if(!parse.success) {
-    console.log(parse.error)
-    return { message: 'data is not valid' };
-  }
+//   if(!parse.success) {
+//     return { message: 'data is not valid' };
+//   }
 
-  const data = parse.data;
-  // console.log('data', data);
-  try {
-    await connectMongoDB();
-    const folder = await FolderModel.findByIdAndUpdate(id, {
-      ...data,
-    });
-    revalidatePath('folders');
-  } catch (error) {
-    return { message: 'failed to create folder' };
-  }
-}
+//   const data = parse.data;
+//   // console.log('data', data);
+//   try {
+//     await connectMongoDB();
+//     await FolderModel.findByIdAndUpdate(id, {
+//       ...data,
+//     });
+//     revalidatePath('folders');
+//   } catch (error) {
+//     return { message: 'failed to create folder' };
+//   }
+// }
 
 
 export async function handleFolder(formData: FormData, id?: string) {
@@ -62,23 +61,19 @@ export async function handleFolder(formData: FormData, id?: string) {
 
   const schema = z.object({
     name: z.string().min(3),
-    tag: z.string().min(1).optional(),
     createdBy: z.string().min(1),
   });
 
   const parse = schema.safeParse({
     name: formData.get('name'),
-    tag: formData.get('tag'),
     createdBy: session!.user.id,
   });
 
   if (!parse.success) {
-    console.log(parse.error);
     return { message: 'Data is not valid' };
   }
 
   const data = parse.data;
-  console.log('data', data);
 
   try {
     await connectMongoDB();
@@ -110,7 +105,6 @@ export async function shareFolder(formData: FormData, folderId: string){
   });
 
   if (!parse.success) {
-    console.log(parse.error);
     return { message: 'Data is not valid' };
   }
 
@@ -142,29 +136,27 @@ export async function shareFolder(formData: FormData, folderId: string){
   }
 }
 
-export const selectFolderTag = async(id: string, formData: FormData) => {
-  const schema = z.object({
-    tag : z.string(),
-  })
+// export const selectFolderTag = async(id: string, formData: FormData) => {
+//   const schema = z.object({
+//     tag : z.string(),
+//   })
 
-  const parse = schema.safeParse({
-    tag: formData.get('tag')
-  })
+//   const parse = schema.safeParse({
+//     tag: formData.get('tag')
+//   })
 
-  if(!parse.success) {
-    console.log(parse.error)
-    return { message: 'data is not valid' };
-  }
+//   if(!parse.success) {
+//     return { message: 'data is not valid' };
+//   }
 
-  const data = parse.data;
-  console.log('data', data);
-  try {
-    await connectMongoDB();
-    const folder = await FolderModel.findByIdAndUpdate(id, {
-      ...data,
-    });
-    revalidatePath('folders');
-  } catch (error) {
-    return { message: 'failed to create folder' };
-  }
-}
+//   const data = parse.data;
+//   try {
+//     await connectMongoDB();
+//     await FolderModel.findByIdAndUpdate(id, {
+//       ...data,
+//     });
+//     revalidatePath('folders');
+//   } catch (error) {
+//     return { message: 'failed to create folder' };
+//   }
+// }
