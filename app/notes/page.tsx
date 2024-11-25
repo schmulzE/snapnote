@@ -1,37 +1,21 @@
-import Notes from '@/app/(components)/notes';
+import { Suspense } from 'react';
+import { getNotes } from '@/actions/notes';
+import { Spinner } from '@nextui-org/react';
+import NoteViewer from '@/app/components/notes/notesViewer';
 
-async function getNotes() {
-  try {
-    const res = await fetch(`http://localhost:3000/api/notes`,  {
-      cache: "no-store",
-    });
-   
-    if (!res.ok) {
-      throw new Error('Failed to fetch data')
-    }
-   
-    return res.json()
-    
-  } catch (error) {
-    console.log(error)
-  }
-}
-
-const Page = async ({ params } : { params: { id: string } }) => {
-  const data = await getNotes();
-  // Make sure we have tickets needed for production build.
-  if (!data?.notes) {
-    return <p>No Notes.</p>;
-  }
-
-  const notes = data.notes;
-
+const Page = async () => {
 
   return (
     <>
-      <Notes notes={notes}/>
+      <Suspense fallback={
+        <div className='flex justify-center content-center'>
+          <Spinner label="Default" color="default" labelColor="foreground"/>
+        </div>
+      }>
+        <NoteViewer fetchNotes={getNotes} title={'notes'} />
+      </Suspense>
     </>
   )
 }
  
-export default Page
+export default Page;
