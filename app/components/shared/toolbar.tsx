@@ -182,9 +182,8 @@ const Toolbar = (
            
           { DYNAMICROUTE && title === 'notes' && 
             <Button
-            className='text-foreground'
+            className='text-white bg-blue-500'
             onClick={() => openModal('Share Note', <ShareNoteForm noteId={id} url={url!}/>)} 
-            color="primary"
             > 
             Share 
             </Button>
