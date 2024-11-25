@@ -13,9 +13,10 @@ import { useSession } from 'next-auth/react';
 import Image from '@tiptap/extension-image'
 import {Note} from '@/models/note';
 import { createNote, editNote } from '@/actions/notes';
-import { useFormState } from 'react-dom';
+// import { useFormState } from 'react-dom';
 import { toast } from 'sonner';
 import MenuBar from './menuBar';
+import { useRouter } from 'next/navigation';
 
 interface RichTextEditorProps { 
   initialContent: string | undefined, 
@@ -35,11 +36,12 @@ const Editor = ({ initialContent, noteId, folderId, editable } : RichTextEditorP
       image: ''
     }
   );
-  const [state, formAction] = useFormState(createNote, {success: false, message: ''});
+  // const [state, formAction] = useFormState(createNote, {success: false, message: ''});
   const [isEditable, setIsEditable] = useState(editable);
   const editorRef = useRef<any>(null);
   const {data: session} = useSession();
-
+  const router = useRouter();
+  
   const editor = useEditor({
     editable: isEditable,
     extensions: [
@@ -105,13 +107,6 @@ const Editor = ({ initialContent, noteId, folderId, editable } : RichTextEditorP
   }, [editor]);
 
   useEffect(() => {
-    if(state.message) {
-      toast.info(state.message)
-    }
-  }, [state.message]);
-
-  useEffect(() => {
-    console.log('user', session?.user?.id)
     setFormData((prevState) => ({
       ...prevState,
       createdBy: session?.user?.id,
@@ -162,9 +157,31 @@ const Editor = ({ initialContent, noteId, folderId, editable } : RichTextEditorP
     })
   };
 
-  
   const HandleNoteContent = async () => {
-    noteId ? await editNote(formData, noteId) : formAction(formData);
+    try {
+      const result = noteId 
+        ? await editNote(formData, noteId)
+        : await createNote(formData);
+  
+      if (result.success) {
+        toast.success(result.message || `Note ${noteId ? 'updated' : 'created'} successfully`);
+        
+        // Refresh data before navigation
+        router.refresh();
+        
+        // Determine redirect path
+        const redirectPath = folderId 
+          ? `/folders/${folderId}`
+          : '/notes';
+          
+        router.push(redirectPath);
+      } else {
+        toast.error(result.message || `Failed to ${noteId ? 'edit' : 'create'} note`);
+      }
+  
+    } catch (error) {
+      toast.error('Failed to save note');
+    }
   }
 
   const setLink = useCallback(() => {
