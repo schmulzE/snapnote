@@ -1,12 +1,11 @@
-import RichTextEditor from '@/app/(components)/rich-text-editor'
-import React from 'react'
+import React from 'react';
+import Editor from '@/app/components/notes/noteEditor/editor';
 
 const page = ({params} : {params : {id : string}}) => {
-  console.log(params.id)
   return (
-    <div>
-       <RichTextEditor initialContent={''} noteId={''} folderId={params.id}/>
-    </div>
+    <>
+      <Editor initialContent={''} noteId={''} folderId={params.id} editable={true}/>
+    </>
   )
 }
 
