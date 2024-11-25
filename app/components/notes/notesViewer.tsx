@@ -8,17 +8,37 @@ import { useRouter } from "next/navigation";
 import { useCallback, useState, useEffect, useRef } from 'react';
 import { addNoteToFavourite, deleteNote } from '@/actions/notes';
 
-const NotesViewer = ({ title, folderName, isFavourite, folderId, fetchNotes, tagSlug }: {
+type GetAllNotesFunction = (page: number, limit?: number) => Promise<{
+  notes: any;
+  hasMore: boolean;
+  totalNotes: number;
+}>;
+type GetNotesByFolderFunction = (page: number, limit: number | undefined, folderId: string) => Promise<{
+  notes: any;
+  hasMore: boolean;
+  totalNotes: number;
+}>;
+type GetNotesByTagFunction = (page: number, limit: number | undefined, tagSlug: string) => Promise<{
+  notes: any;
+  hasMore: boolean;
+  totalNotes: number;
+}>;
+type GetNotesBySearchFunction = (page: number, limit: number | undefined, query: string) => Promise<{
+  notes: any;
+  hasMore: boolean;
+  totalNotes: number;
+}>;
+
+type FetchNotesFunction = GetAllNotesFunction | GetNotesByFolderFunction | GetNotesByTagFunction | GetNotesBySearchFunction;
+
+const NotesViewer = ({ title, folderName, isFavourite, folderId, fetchNotes, tagSlug, query }: {
   title: string,
   folderName?: string,
   isFavourite?: boolean,
   folderId?: string,
-  fetchNotes:  (page?: number, limit?: number, tagSlug?: string) => Promise<{
-    notes: any;
-    hasMore: boolean;
-    totalNotes: number;
-  }>,
-  tagSlug?: string
+  tagSlug?: string,
+  query?: string,
+  fetchNotes: FetchNotesFunction,
 }) => {
   const router = useRouter()
   const [notes, setNotes] = useState<Note[]>([]);
@@ -61,7 +81,16 @@ const NotesViewer = ({ title, folderName, isFavourite, folderId, fetchNotes, tag
       setIsLoading(true);
 
       try {
-        const result = await fetchNotes(page, undefined ,tagSlug);
+        let result: any;
+        if (tagSlug) {
+          result = await (fetchNotes as GetNotesByTagFunction)(page, undefined, tagSlug);
+        } else if (folderId) {
+          result = await (fetchNotes as GetNotesByFolderFunction)(page, undefined, folderId);
+        } else if (query) {
+          result = await (fetchNotes as GetNotesBySearchFunction)(page, undefined, query);
+        } else {
+          result = await (fetchNotes as GetAllNotesFunction)(page, undefined);
+        }
         if (mounted) {
           setNotes(prev => [...prev, ...result.notes]);
           setHasMore(result.hasMore);
@@ -80,7 +109,8 @@ const NotesViewer = ({ title, folderName, isFavourite, folderId, fetchNotes, tag
     return () => {
       mounted = false;
     };
-  }, [page, fetchNotes, tagSlug]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, fetchNotes, tagSlug, folderId]);
 
   const processedNotes = notes.filter(note => {
     if (filters.favorite && !note.favourite) return false;
@@ -96,25 +126,35 @@ const NotesViewer = ({ title, folderName, isFavourite, folderId, fetchNotes, tag
     return 0;
   });
 
-  const deleteNoteHandler = async(id: string) => {
-    if(confirm('Are you sure want to delete') === true) {
-      setNotes(notes.filter(note => note._id !== id));
-      await deleteNote(id)
-      toast.success('Note deleted successfully!'); 
+  const deleteNoteHandler = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this note?')) return;
+    
+    try {
+      setNotes((prevNotes) => prevNotes.filter((note) => note._id !== id));
+      await deleteNote(id);
+      toast.success('Note deleted successfully!');
       router.refresh();
-      router.push('/notes');
+    } catch (error) {
+      toast.error('Failed to delete the note.');
     }
-  }
+  };
 
-  const toggleFavouriteNote = async(id: string) => {
-    const note = notes.find((note) => note._id === id) as Note;
-    setNotes((prevNotes) =>
-      prevNotes.map((note) =>
-        note._id === id ? { ...note, favourite: !note.favourite } : note
-      )
-    );
-    await addNoteToFavourite(id, !note.favourite)
-  }
+  const toggleFavouriteNote = async (id: string) => {
+    const noteIndex = notes.findIndex((note) => note._id === id);
+    if (noteIndex === -1) return;
+
+    const updatedNotes = [...notes];
+    const note = updatedNotes[noteIndex];
+    const updatedFavourite = !note.favourite;
+
+    try {
+      updatedNotes[noteIndex] = { ...note, favourite: updatedFavourite };
+      setNotes(updatedNotes);
+      await addNoteToFavourite(id, updatedFavourite);
+    } catch (error) {
+      toast.error('Failed to update favourite status.');
+    }
+  };
 
   const toggleFilter = (filterName: keyof typeof filters) => {
     setFilters(prev => ({
@@ -129,7 +169,7 @@ const NotesViewer = ({ title, folderName, isFavourite, folderId, fetchNotes, tag
         title={title} 
         tag={''} 
         folderName={folderName} 
-        id={folderId!} 
+        id={folderId ?? ''} 
         isFavourite={isFavourite} 
         setState={setNotes as any}
         setFilterByNoTag={() => toggleFilter('noTag')}
