@@ -10,6 +10,7 @@ import { getServerSession } from 'next-auth';
 import { connectMongoDB } from '@/lib/mongodb';
 import NoteModel, { Note } from '@/models/note';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { ObjectId } from 'mongodb';
 
 export async function createNote(formData : Note) {
   const schema = z.object({
@@ -440,3 +441,86 @@ export const getNoteByFolderId = async (page: number = 1, limit: number = 9, fol
     throw new Error(`Failed to fetch notes: ${error.message}`);
   }
 };
+
+export const searchNotes = async (page: number = 1, limit: number = 9, query: string) => {
+  try {
+    if (!query) {
+      throw new Error("Query is required.");
+    }
+
+    await connectMongoDB();
+    const session = await getServerSession(authOptions);
+    
+    if (!session?.user.id) {
+      throw new Error("Unauthorized");
+    }
+
+    const skip = (page - 1) * limit;
+
+    const notes = await NoteModel.aggregate([
+      {
+        '$search': {
+          'index': 'searchNotes',
+          'text': {
+            'query': query,
+            'path': ['title', 'content'],
+            'fuzzy': {}
+          }
+        }
+      },
+      {
+       '$match': {
+          createdBy: new ObjectId(session.user.id) // Filter for user's notes only
+        }
+      },
+      {
+        '$sort': { createdAt: -1 }
+      },
+      {
+        '$lookup': {
+          from: 'tags',
+          localField: 'tags',
+          foreignField: '_id',
+          as: 'tags'
+        }
+      },
+      {
+        '$skip': skip
+      },
+      {
+        '$limit': limit
+      }
+    ]);
+
+    const totalNotes = await NoteModel.aggregate([
+      {
+        '$search': {
+          'index': 'searchNotes',
+          'text': {
+            'query': query,
+            'path': ['title', 'content'],
+            'fuzzy': {}
+          }
+        }
+      },
+      {
+        '$match': {
+          createdBy: new ObjectId(session.user.id)
+        }
+      },
+      {
+        '$count': 'total'
+      }
+    ]);
+
+    const total = totalNotes.length > 0 ? totalNotes[0].total : 0;
+    return {
+      notes: JSON.parse(JSON.stringify(notes)),
+      hasMore: total > skip + notes.length,
+      totalNotes: total
+    };
+
+  } catch(error: any) {
+    throw new Error(`Failed to fetch notes: ${error.message}`);
+  }
+}
