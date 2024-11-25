@@ -1,74 +1,21 @@
-import RichTextEditor from '@/app/(components)/rich-text-editor';
-import Toolbar from '@/app/(components)/toolbar';
-import { redirect } from 'next/navigation';
-import { revalidatePath } from 'next/cache';
-interface Note {
-  _id? : string;
-  title?: string;
-  content?: string;
-  folder?: string;
-}
+import Editor from '@/app/components/notes/noteEditor/editor';
+import Toolbar from '@/app/components/shared/toolbar';
+import { connectMongoDB } from '@/lib/mongodb';
+import NoteModel, { Note } from '@/models/note';
+import SharedLinkModel, { SharedLink } from '@/models/sharedLink';
 
-async function fetchSingleNote(id: string) { 
-  try {
-    const res = await fetch(`http://localhost:3000/api/notes/${id}`,  {
-      cache: "no-store",
-    });
-    
-    if (!res.ok) {
-      throw new Error('Failed to fetch data')
-    }
-    
-    return res.json()
-    
-  } catch (error) {
-    console.log(error)
-  }
-}
-
-const deleteNote = async (id: string) => {
-  "use server"; 
-  try {
-    const res = await fetch(`http://localhost:3000/api/notes/${id}`,  {
-      method: 'DELETE',
-    });
-    
-    if (!res.ok) {
-      throw new Error('Failed to fetch data...')
-    }
-    
-    // return res.json()
-  } catch (error) {
-    console.log(error)
-  }
-}
 const Page = async ({ params } : { params: { id: string } }) => {
-  // const router = useRouter();
-  const data = await fetchSingleNote(params.id);
-  // Make sure we have tickets needed for production build.
-  if (!data?.note) {
-    return <p>No Note.</p>;
-  }
-
-  const note = data.note;
-
-  const deleteNoteHandler = async() => {
-    "use server"
-
-    await deleteNote(params.id);
-    console.log('hey!')
-    revalidatePath('/notes') // Update cached posts
-    redirect('/notes')
-  }
-
+  await connectMongoDB();
+  const data = (await NoteModel.findOne({ _id: params.id }));
+  const note = JSON.parse(JSON.stringify(data)) as Note;
+  const noteLink = await SharedLinkModel.findOne({ noteId: params.id }) as SharedLink;
+  const url = noteLink ? JSON.parse(JSON.stringify(noteLink.url)) : '';
+  const content = note.title ? note.title + note.content : note.content;
 
   return (
     <>
-      <div className="w-full max-w-screen-lg p-4 space-y-8">
-        <Toolbar title={'note'} deleteHandler={deleteNoteHandler}/>
-        {/* <h1 className='text-4xl font-bold capitalize my-8'>{note.title}</h1> */}
-        <RichTextEditor initialContent={note?.content} noteId={note?._id}/>
-      </div>
+      <Toolbar title={'notes'} id={params.id} url={url} isFavourite={note.favourite}/>
+      <Editor editable={true} initialContent={content} noteId={note._id}/>
     </>
   )
 }
