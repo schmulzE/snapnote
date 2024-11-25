@@ -43,7 +43,7 @@ const FolderItem: React.FC<FolderItemProps> = ({ folder, onOpen, setFolderId }) 
   ];
 
   return (
-    <li key={folder._id} className='w-80 h-48 shadow-[0px_4px_6px_0px_rgba(0,_0,_0,_0.1)] p-4 rounded-md relative'>
+    <li key={folder._id} className='w-36 md:w-52 lg:w-80 h-48 shadow-md shadow-gray-500/45 p-4 rounded-md relative'>
       <div className='flex justify-between absolute top-2 right-0 px-4 w-full'>
         <i style={{ color: generateColorFromText(folder.name) }} className="ri-folder-5-fill text-3xl"></i>
         <Dropdown 
