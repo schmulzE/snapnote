@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { Button, RadioGroup, Radio, cn, RadioProps } from "@nextui-org/react";
-import generateColorFromText from '@/utils/generateColorFromText';
 import { Tag } from '@/models/tag';
-import { selectFolderTag } from '@/actions/folders';
 import { selectNoteTag } from '@/actions/notes';
+import generateColorFromText from '@/utils/generateColorFromText';
+import { Button, RadioGroup, Radio, cn, RadioProps } from "@nextui-org/react";
 
 interface CustomRadioProps extends RadioProps {
   children: React.ReactNode;
@@ -31,19 +30,13 @@ const SelectTag = ({ tags, onClose, text, tagId, id }: { tags: Tag[], onClose: (
 
   const handleChange = (value: string) => {
     setSelectedTag(value);
-    console.log(value);
   }
 
   const handleSubmit = async (formData: FormData) => {
     if (!selectedTag) return;
 
     formData.append('tag', selectedTag);
-
-    if (text === 'notes') {
-      return selectNoteTag(id, formData);
-    } else {
-      return selectFolderTag(id, formData);
-    }
+    await selectNoteTag(id, formData);
   }
 
   return (

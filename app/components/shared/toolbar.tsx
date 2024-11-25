@@ -20,11 +20,15 @@ import ShareNoteForm from './shareNoteForm';
 import ToggleSidebarButton from './toggleSidebarButton';
 import ListboxWrapper from '@/app/components/ui/listBoxWrapper';
 import { addNoteToFavourite, deleteNote } from '@/actions/notes';
-// import { FacebookShareButton, TwitterShareButton } from "react-share";
-import { addFolderToFavourite, deleteFolder } from '@/actions/folders';
+import { deleteFolder } from '@/actions/folders';
 import { initialState, modalReducer } from '@/app/reducers/modalReducer';
 
-function PopoverContent({deleteHandler, isFavourite, toggleFavourite} : {deleteHandler: () => void, isFavourite: boolean | undefined, toggleFavourite: () => void}) {
+interface PopoverContentProps { 
+  deleteHandler: () => void, 
+  isFavourite: boolean | undefined, 
+  toggleFavourite: () => void
+}
+function PopoverContent({deleteHandler, isFavourite, toggleFavourite} : PopoverContentProps) {
 
   return (
     <ListboxWrapper>
@@ -105,7 +109,7 @@ const Toolbar = (
   const toggleFavourite = async() => {
     const updatedFormData = { ...formData, favourite: !formData.favourite };
     setFormData(updatedFormData);
-    title === "folders" ? addFolderToFavourite(id, !formData.favourite) : addNoteToFavourite(id, !formData.favourite);
+    addNoteToFavourite(id, !formData.favourite);
   }
 
 
@@ -133,7 +137,7 @@ const Toolbar = (
          { DYNAMICROUTE && title === 'folders' ? <Breadcrumb folderName={folderName}/> : null }
 
         <div className='space-x-3'>
-          { SINGLEROUTE && 
+          { SINGLEROUTE && title !== 'folders' || DYNAMICROUTE && title === 'folders' ? 
           <Popover 
           button={
             <Button isIconOnly className='outline-none bg-transparent'>
@@ -141,9 +145,9 @@ const Toolbar = (
             </Button>
           } 
           content={<FilterComponent setFilterByNoTag={setFilterByNoTag} setFilterByFavorite={setFilterByFavorite} />}/>
-          }
+          : null}
     
-          { SINGLEROUTE && 
+          { SINGLEROUTE && title !== 'folders' || DYNAMICROUTE && title === 'folders' ?
             <Popover 
             button={
               <Button isIconOnly className='outline-none bg-transparent'>
@@ -152,9 +156,9 @@ const Toolbar = (
             } 
             content={<SortComponent setSortByDate={setSortByDate!} setSortAlphabetically={setSortAlphabetically!} setState={setState} />}
             /> 
-          }
+          : null}
             
-          { DYNAMICROUTE && 
+          { DYNAMICROUTE && title !== 'folders' ?
             <Tooltip 
             radius='none' 
             content={'add tag'}>
@@ -167,14 +171,14 @@ const Toolbar = (
                 <i className='ri-bookmark-line'></i>
               </button>
             </Tooltip> 
-          }
+          : null}
 
-          { DYNAMICROUTE && 
+          { DYNAMICROUTE && title !== 'folders' ?
           <Popover 
           button={<button className='outline-none bg-transparent'><i className="ri-more-2-fill"></i></button>} 
           content={<PopoverContent deleteHandler={deleteHandler} toggleFavourite={toggleFavourite} isFavourite={formData.favourite}/>}
           />
-          }
+          : null}
            
           { DYNAMICROUTE && title === 'notes' && 
             <Button

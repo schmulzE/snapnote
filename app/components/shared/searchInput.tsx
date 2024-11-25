@@ -14,7 +14,6 @@ const SearchInput = () => {
 
     setSearchTerm("");
     router.push(`/search/${searchTerm}`);
-    console.log('Search term:', searchTerm);
   };
 
   
@@ -22,7 +21,7 @@ const SearchInput = () => {
     <form onSubmit={handleSubmit}>
       <Input
         size="sm"
-        placeholder='search'
+        placeholder='search notes...'
         type="text"
         className="w-full"
         value={searchTerm}

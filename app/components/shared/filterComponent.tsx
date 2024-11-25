@@ -1,26 +1,17 @@
+import { usePathname } from "next/navigation";
 import React, { Dispatch, SetStateAction } from 'react';
 import { Listbox, ListboxItem } from "@nextui-org/listbox";
 import ListboxWrapper from '@/app/components/ui/listBoxWrapper';
 
-interface Folder {
-  _id?: string;
-  name: string;
-  createdBy?: string | undefined;
-  tag?: string;
-  favourite?: string;
-  createdAt: string
-}
-
 interface filterProp {
   setFilterByFavorite: Dispatch<SetStateAction<boolean>> | undefined;
   setFilterByNoTag: Dispatch<SetStateAction<boolean>> | undefined;
-  // setState: Dispatch<SetStateAction<Note[] | Folder[]>> | undefined;
 }
 
 
 function FilterComponent({ setFilterByFavorite, setFilterByNoTag } : filterProp) {
   const [selectedKeys, setSelectedKeys] = React.useState<any>(new Set([]));
-  
+  const pathname = usePathname();
 
   return (
     <ListboxWrapper>
@@ -39,6 +30,7 @@ function FilterComponent({ setFilterByFavorite, setFilterByNoTag } : filterProp)
         <ListboxItem 
         onPress={() => setFilterByFavorite!((prevState) => !prevState)} 
         key="favourite" 
+        isReadOnly={pathname === '/favourites'}
         >
           Filter by Favourite
         </ListboxItem>
