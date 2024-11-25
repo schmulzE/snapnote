@@ -6,13 +6,15 @@ import { useRouter } from 'next/navigation';
 
 
 const DeleteNote = () => {
-  const router = useRouter()
+  const router = useRouter();
+
   const deleteAllNotesHandler = async() => {
     if(confirm('Are you sure you want to delete all Note') === true) {
       await deleteAllNotes()
       router.refresh()
     }
   }
+  
   return (
     <div className='flex justify-between items-center'>
     <div>Delete all notes</div>
