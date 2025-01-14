@@ -7,11 +7,11 @@ import { z } from 'zod';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 
-const isDevelopment = process.env.NODE_ENV === 'development';
+const isDevelopment = process.env.NEXT_PUBLIC_NODE_ENV === 'development';
 
 const BASE_URL = isDevelopment
-  ? process.env.DEV_BASE_URL || 'http://localhost:3000'
-  : process.env.PROD_BASE_URL || 'https://your-production-domain.com';
+  ? process.env.NEXT_PUBLIC_DEV_BASE_URL || 'http://localhost:3000'
+  : process.env.NEXT_PUBLIC_PROD_BASE_URL || 'https://your-production-domain.com';
 
 
   export const createShareLink = async(noteId: string) => {
