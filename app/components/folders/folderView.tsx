@@ -17,36 +17,36 @@ const FolderView = ({ folders } : { folders : Folder[]}) => {
   const [sortByDate, setSortByDate] = useState(false);
   const [sortAlphabetically, setSortAlphabetically] = useState(false);
 
-  const filterFolders = useCallback((folders: Folder[]) => {
-    let filteredFolders = [...folders];
+  // const filterFolders = useCallback((folders: Folder[]) => {
+  //   let filteredFolders = [...folders];
   
-    if (filterByNoTag) {
-      filteredFolders = filteredFolders.filter((folder) => !folder.tag);
-    }
+  //   if (filterByNoTag) {
+  //     filteredFolders = filteredFolders.filter((folder) => !folder.tag);
+  //   }
   
-    if (filterByFavorite) {
-      filteredFolders = filteredFolders.filter((folder) => folder.favourite);
-    }
+  //   if (filterByFavorite) {
+  //     filteredFolders = filteredFolders.filter((folder) => folder.favourite);
+  //   }
   
-    return filteredFolders;
-  }, [filterByFavorite, filterByNoTag]);
+  //   return filteredFolders;
+  // }, [filterByFavorite, filterByNoTag]);
 
-  const sortFolders = useCallback((folders: Folder[]) => {
-    let sortedFolders = [...folders];
+  // const sortFolders = useCallback((folders: Folder[]) => {
+  //   let sortedFolders = [...folders];
   
-    if (sortByDate) {
-      sortedFolders = sortedFolders.sort((a, b) => new Date(a.createdAt!).getTime() - new Date(b.createdAt!).getTime());
-    }
+  //   if (sortByDate) {
+  //     sortedFolders = sortedFolders.sort((a, b) => new Date(a.createdAt!).getTime() - new Date(b.createdAt!).getTime());
+  //   }
   
-    if (sortAlphabetically) {
-      sortedFolders = sortedFolders.sort((a, b) => a.name!.localeCompare(b.name!));
-    }
+  //   if (sortAlphabetically) {
+  //     sortedFolders = sortedFolders.sort((a, b) => a.name!.localeCompare(b.name!));
+  //   }
   
-    return sortedFolders;
-  }, [sortAlphabetically, sortByDate]);
+  //   return sortedFolders;
+  // }, [sortAlphabetically, sortByDate]);
 
-  const filteredFolders = filterFolders(folders);
-  const sortedFolders = sortFolders(folders);
+  // const filteredFolders = filterFolders(folders);
+  // const sortedFolders = sortFolders(folders);
 
   return (
     <>
@@ -54,14 +54,13 @@ const FolderView = ({ folders } : { folders : Folder[]}) => {
       title={'folders'} 
       id={''} 
       isFavourite={false}
-      // state={data as Folder[]} 
       setState={setData}
       setFilterByNoTag={setFilterByNoTag}
       setFilterByFavorite={setFilterByFavorite}
       setSortByDate={setSortByDate}
       setSortAlphabetically={setSortAlphabetically}
       />
-      <FolderList folders={filteredFolders.length > 0 ? filteredFolders : sortedFolders} onOpen={onOpen} setFolderId={setFolderId}/>
+      <FolderList folders={folders} onOpen={onOpen} setFolderId={setFolderId}/>
 
       <Modal onClose={onClose} size='sm' isOpen={isOpen} title={'Edit Folder'}>
         <FolderForm onClose={onClose} folderId={folderId}/>
