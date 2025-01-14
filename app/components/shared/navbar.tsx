@@ -18,7 +18,6 @@ import logo from '@/public/logo-black.svg';
 
 
 const navItems = [
-  { name: 'Home', href: '/' },
   { name: 'Features', href: '/#features' },
   { name: 'Pricing', href: '/#pricing' },
   { name: 'Testimonials', href: '/#testimonials' },
@@ -53,6 +52,7 @@ export default function AppNavbar() {
               color={pathname === item.href ? "primary" : "foreground"}
               href={item.href}
               aria-current={pathname === item.href ? "page" : undefined}
+              size='md'
             >
               {item.name}
             </Link>

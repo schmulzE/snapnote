@@ -11,7 +11,13 @@ const Sidebar =  ({ tags }: { tags: Tag[]}) => {
   const { isMobile, isOpen, toggleSidebar } = useSidebar()
 
   const sidebarContent = (
-    <div>
+    <div 
+    className='overflow-y-auto h-full [&::-webkit-scrollbar]:w-2
+  [&::-webkit-scrollbar-track]:bg-gray-100
+  [&::-webkit-scrollbar-thumb]:bg-gray-300
+  dark:[&::-webkit-scrollbar-track]:bg-neutral-700
+  dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500'
+    >
       <div className='space-y-8 lg:space-y-4 w-full'>
         <div className='flex items-center justify-between'>
           <h1 className='text-xl font-medium'>Menu</h1>

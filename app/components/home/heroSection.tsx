@@ -7,9 +7,9 @@ import Image from "next/image";
 const HeroSection = () => {
   return (
     <>
-      <div className="relative w-full flex justify-center pt-0 pb-4 px-[60px] mt-8 md:mt-16">
+      <div className="relative w-full flex justify-center pt-0 pb-16 px-[60px] mt-8 md:mt-16">
         <div className="relative max-w-[900px]">
-          <div className="flex flex-col content-center items-center justify-center gap-y-16 md:gap-y-24">
+          <div className="flex flex-col content-center items-center justify-center gap-y-16 md:gap-y-16">
             <Image src={logo} alt={'snapnote logo'} width={600} className='rounded-xl'/>
             <div className="flex h-5 items-center space-x-4 text-small max-w-[600px]">
               <div className="text-center">The ultimate note-taking app with powerful todo features, personalized tagging, and smart organization.</div>

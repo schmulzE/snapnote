@@ -12,7 +12,7 @@ const Pricing = () => {
             { name: "Pro", price: "$9.99/month", features: ["Everything in Basic", "Advanced todo features", "Unlimited custom tags", "10 GB storage", "Priority support"] },
             { name: "Team", price: "$19.99/month", features: ["Everything in Pro", "Team collaboration", "Admin controls", "100 GB storage", "API access"] }
           ].map((plan, index) => (
-            <div key={index} className={index === 1 ? "border-purple-500 border-2 p-4 bg-background rounded-md" : "" + "p-4 bg-background rounded-md"}>
+            <div key={index} className={"hover:border-purple-500 border-2 p-4 bg-background rounded-md"}>
               <div>
                 <h1>{plan.name}</h1>
                 <span className="text-2xl font-bold">{plan.price}</span>

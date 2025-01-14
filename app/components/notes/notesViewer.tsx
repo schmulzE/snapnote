@@ -180,6 +180,7 @@ const NotesViewer = ({ title, folderName, isFavourite, folderId, fetchNotes, tag
       <NoteList 
         notes={processedNotes}
         folderId={folderId}
+        isLoading={isLoading}
         lastNoteElementRef={lastNoteElementRef}
         deleteNoteHandler={deleteNoteHandler}
         toggleFavouriteNote={toggleFavouriteNote}

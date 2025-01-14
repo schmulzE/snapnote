@@ -41,6 +41,9 @@ interface NoteItemProps {
             {note.tag ? <i style={{ color: generateColorFromText(note.tag?.name)}} className='ri-bookmark-fill'></i> :
             <i className='ri-bookmark-line'></i> }
           </div>
+          <div>
+            {note!.folder &&  <i className='ri-folder-line'></i> }
+          </div>
         </div>
         <button onClick={() => deleteNoteHandler(note._id!)}>
           <i className='ri-delete-bin-line'></i>

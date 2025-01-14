@@ -1,21 +1,23 @@
 "use client"
 
-import { Note } from '@/models/note';
 import NoteItem from './noteItem';
+import { Note } from '@/models/note';
+import { Spinner } from '@nextui-org/react';
+import AddNoteButton from './addNoteButton';
 import { usePathname } from 'next/navigation';
 import SearchInput from '../shared/searchInput';
 import { useSidebar } from '@/app/sidebarProvider';
-import AddNoteButton from './addNoteButton';
 
 interface NoteListProps{ 
-  notes: Note[], 
+  notes: Note[],
+  isLoading: boolean,
   folderId : string | undefined, 
   deleteNoteHandler: (id: string) => void, 
   toggleFavouriteNote: (id : string) => void, 
   lastNoteElementRef: (node: HTMLLIElement | null) => void 
 }
 
-const NoteList = ({ notes, folderId, lastNoteElementRef, deleteNoteHandler, toggleFavouriteNote }: NoteListProps) => {
+const NoteList = ({ notes, folderId, lastNoteElementRef, deleteNoteHandler, toggleFavouriteNote, isLoading }: NoteListProps) => {
   const pathname = usePathname();
   const {isMobile} = useSidebar()
 
@@ -35,6 +37,11 @@ const NoteList = ({ notes, folderId, lastNoteElementRef, deleteNoteHandler, togg
         ))}
         <AddNoteButton folderId={folderId}/>
       </ul>
+      {isLoading ??
+      <div className='flex justify-center content-center'>
+        <Spinner color="default" labelColor="foreground"/>
+      </div>
+      }
     </>
   )
 }

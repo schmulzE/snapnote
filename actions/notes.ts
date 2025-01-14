@@ -307,8 +307,8 @@ export async function getFavouriteNotes(page: number = 1, limit: number = 9) {
   }
 }
 
-export const getTaggedNotes = async( page: number = 1, limit: number = 9, params?: string) => {
 
+export const getTaggedNotes = async(page: number = 1, limit: number = 9, params?: string) => {
   try {
     await connectMongoDB();
 
@@ -318,31 +318,46 @@ export const getTaggedNotes = async( page: number = 1, limit: number = 9, params
       throw new Error("Unauthorized");
     }
     
-    const skip = (page - 1) * limit
+    const skip = (page - 1) * limit;
     const tag = await TagModel.findOne({ name: params });
-    const notes = await NoteModel
-    .find({ createdBy: session.user.id, tags: tag._id })
-    .populate({
-      path: 'tag',
-      model: 'Tag'
-    })
-    .sort({ createdAt: -1 })
-    .skip(skip)
-    .limit(limit)
-    .lean()
 
-    const totalNotes = await NoteModel.countDocuments({ createdBy: session.user.id })
+    // Check if tag exists
+    if (!tag) {
+      return {
+        notes: [],
+        hasMore: false,
+        totalNotes: 0
+      };
+    }
+
+    const notes = await NoteModel
+      .find({ createdBy: session.user.id, tag: tag._id })
+      .populate({
+        path: 'tag',
+        model: 'Tag'  // Changed to match your schema's ref
+      })
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .lean();
+
+    // Update totalNotes to count notes with the specific tag
+    const totalNotes = await NoteModel.countDocuments({ 
+      createdBy: session.user.id,
+      tag: tag._id 
+    });
 
     return {
       notes: JSON.parse(JSON.stringify(notes)),
       hasMore: totalNotes > skip + notes.length,
       totalNotes
-    }
+    };
 
   } catch (error: any) {
     throw new Error(`Failed to fetch notes: ${error.message}`);
   }
 }
+
 
 export const getNoteByFolderId = async (page: number = 1, limit: number = 9, folderId?: string) => {
   try {

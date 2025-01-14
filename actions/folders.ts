@@ -6,6 +6,7 @@ import { revalidatePath } from 'next/cache';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import UserModel from '@/models/user';
+import NoteModel from '@/models/note';
 
 export async function getFolder(id: string) {
   await connectMongoDB();
@@ -17,43 +18,37 @@ export async function getFolder(id: string) {
 
 export const deleteFolder = async(id: string) => {
   try { 
-  await connectMongoDB();
-  const folder = await FolderModel.findById(id);
-  if (folder) {
-    await FolderModel.findByIdAndDelete(id);
-  }
-  revalidatePath('/folders');
+    await connectMongoDB();
+    
+    const session = await getServerSession(authOptions);
+    
+    if (!session?.user.id) {
+      throw new Error("Unauthorized");
+    }
 
-  } catch (error) {
+    // Find and delete folder in one operation, checking user ownership
+    const deletedFolder = await FolderModel.findOneAndDelete({
+      _id: id,
+      createdBy: session.user.id
+    });
+
+    if (!deletedFolder) {
+      throw new Error("Folder not found or unauthorized");
+    }
+
+    // Update all notes that reference this folder
+    await NoteModel.updateMany(
+      { folder: id },
+      { $unset: { folder: "" } }
+    );
+    
+    revalidatePath('/folders');
+    return { message: 'Folder deleted successfully' };
+
+  } catch (error: any) {
     return { message: 'failed to delete folder' };
   }
 }
-
-// export const addFolderToFavourite = async(id: string, favourite: boolean) => {
-//   const schema = z.object({
-//     isFavourite: z.boolean().optional(),
-//   })
-
-//   const parse = schema.safeParse({
-//     isFavourite: favourite
-//   })
-
-//   if(!parse.success) {
-//     return { message: 'data is not valid' };
-//   }
-
-//   const data = parse.data;
-//   // console.log('data', data);
-//   try {
-//     await connectMongoDB();
-//     await FolderModel.findByIdAndUpdate(id, {
-//       ...data,
-//     });
-//     revalidatePath('folders');
-//   } catch (error) {
-//     return { message: 'failed to create folder' };
-//   }
-// }
 
 
 export async function handleFolder(formData: FormData, id?: string) {
@@ -135,28 +130,3 @@ export async function shareFolder(formData: FormData, folderId: string){
     return { message: 'An error occurred', error };
   }
 }
-
-// export const selectFolderTag = async(id: string, formData: FormData) => {
-//   const schema = z.object({
-//     tag : z.string(),
-//   })
-
-//   const parse = schema.safeParse({
-//     tag: formData.get('tag')
-//   })
-
-//   if(!parse.success) {
-//     return { message: 'data is not valid' };
-//   }
-
-//   const data = parse.data;
-//   try {
-//     await connectMongoDB();
-//     await FolderModel.findByIdAndUpdate(id, {
-//       ...data,
-//     });
-//     revalidatePath('folders');
-//   } catch (error) {
-//     return { message: 'failed to create folder' };
-//   }
-// }

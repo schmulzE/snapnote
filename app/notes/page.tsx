@@ -8,8 +8,8 @@ const Page = async () => {
   return (
     <>
       <Suspense fallback={
-        <div className='flex justify-center content-center'>
-          <Spinner label="Default" color="default" labelColor="foreground"/>
+        <div className='flex justify-center h-full content-center'>
+          <Spinner label="Loading..." color="default" labelColor="foreground"/>
         </div>
       }>
         <NoteViewer fetchNotes={getNotes} title={'notes'} />
