@@ -32,7 +32,6 @@ export async function createTodo(formData : FormData) {
   }
 
   const data = parse.data;
-  console.log('data', data);
 
   try {
     await connectMongoDB();
@@ -70,7 +69,6 @@ export async function editTodo(id: string, formData: FormData ) {
   }
 
   const data = parse.data;
-  console.log('data', data);
   try {
     await connectMongoDB();
     const todo = await TodoModel.findByIdAndUpdate(id, {
@@ -98,7 +96,6 @@ export async function toggleTodo(id: string, completed: boolean ) {
   }
 
   const data = parse.data;
-  console.log('data', data);
   try {
     await connectMongoDB();
     const todo = await TodoModel.findByIdAndUpdate(id, {

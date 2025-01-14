@@ -74,7 +74,15 @@ const TodoForm = ({ todo, onClose }: { todo?: Todo, onClose?: () => void }) => {
   return (
     <form 
     ref={ref} 
-    action={EDITMODE ? updateTodo : createTodo} 
+    action={async (formData: FormData) => {
+      if (EDITMODE) {
+        await updateTodo(formData);
+      } else {
+        await createTodo(formData);
+      }
+      // Handle any post-submission logic here
+      router.push('/todos');
+    }} 
     className='bg-content1 sticky top-0 w-full max-w-96 m-2 p-2 rounded-md max-h-[700px] flex flex-col justify-between'
     >
       <div className="space-y-4">

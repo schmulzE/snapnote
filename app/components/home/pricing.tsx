@@ -4,9 +4,9 @@ import React from 'react'
 const Pricing = () => {
   return (
     <section id="pricing" className="w-full py-12 md:py-24 lg:py-32 bg-gray-100">
-      <div className="container px-4 md:px-6">
+      <div className="flex flex-col justify-center content-center mx-auto max-w-5xl px-4 md:px-6">
         <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-center mb-12">Simple Pricing</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
           {[
             { name: "Basic", price: "Free", features: ["Unlimited notes", "Basic todo lists", "5 custom tags", "1 GB storage"] },
             { name: "Pro", price: "$9.99/month", features: ["Everything in Basic", "Advanced todo features", "Unlimited custom tags", "10 GB storage", "Priority support"] },
