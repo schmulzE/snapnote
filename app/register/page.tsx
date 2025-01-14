@@ -1,7 +1,7 @@
 import RegisterForm from "@/app/components/auth/registerForm";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
-import { authOptions } from "../api/auth/[...nextauth]/route";
+import { authOptions } from "../api/auth/[...nextauth]/auth";
 
 export default async function Register() {
   const session = await getServerSession(authOptions as any);

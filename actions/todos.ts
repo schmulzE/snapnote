@@ -4,7 +4,7 @@ import TodoModel from '@/models/todo';
 import { connectMongoDB } from '@/lib/mongodb';
 import { revalidatePath } from 'next/cache';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from '@/app/api/auth/[...nextauth]/auth';
 
 export async function createTodo(formData : FormData) {
   const session = await getServerSession(authOptions);

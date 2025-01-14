@@ -9,7 +9,7 @@ import { revalidatePath } from 'next/cache';
 import { getServerSession } from 'next-auth';
 import { connectMongoDB } from '@/lib/mongodb';
 import NoteModel, { Note } from '@/models/note';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from '@/app/api/auth/[...nextauth]/auth';
 import { ObjectId } from 'mongodb';
 
 export async function createNote(formData : Note) {

@@ -5,7 +5,7 @@ import { nanoid } from 'nanoid';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from '@/app/api/auth/[...nextauth]/auth';
 
 const isDevelopment = process.env.NEXT_PUBLIC_NODE_ENV === 'development';
 

@@ -1,6 +1,6 @@
 "use server";
 
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/app/api/auth/[...nextauth]/auth";
 import { connectMongoDB } from "@/lib/mongodb";
 import TagModel, { Tag } from "@/models/tag";
 import { getServerSession } from "next-auth";

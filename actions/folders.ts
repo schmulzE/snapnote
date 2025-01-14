@@ -4,7 +4,7 @@ import FolderModel, { Folder } from '@/models/folder';
 import { connectMongoDB } from '@/lib/mongodb';
 import { revalidatePath } from 'next/cache';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from '@/app/api/auth/[...nextauth]/auth';
 import UserModel from '@/models/user';
 import NoteModel from '@/models/note';
 
