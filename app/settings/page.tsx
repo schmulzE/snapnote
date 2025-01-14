@@ -2,7 +2,7 @@ import ThemeSwitcher from '../components/shared/themeSwitcher';
 import SharedLinkContainer from '../components/sharedLinks/sharedLinkContainer';
 import { connectMongoDB } from '@/lib/mongodb';
 import SharedLinkModel, { SharedLink } from '@/models/sharedLink';
-import DeleteNote from '../components/notes/deleteNote';
+import DeleteAllNotesButton from '../components/notes/deleteAllNotesButton';
 import ToggleSidebarButton from '../components/shared/toggleSidebarButton';
 
 export default async function App() {
@@ -18,7 +18,7 @@ export default async function App() {
       <div className="bg-content1 w-full max-5xl rounded-md p-4 space-y-4 text-sm">
         <ThemeSwitcher/>
         <SharedLinkContainer sharedLinks={JSON.parse(JSON.stringify(sharedLinks))}/>
-        <DeleteNote/>
+        <DeleteAllNotesButton/>
       </div>
     </>
   )

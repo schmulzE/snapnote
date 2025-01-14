@@ -22,6 +22,7 @@ import ListboxWrapper from '@/app/components/ui/listBoxWrapper';
 import { addNoteToFavourite, deleteNote } from '@/actions/notes';
 import { deleteFolder } from '@/actions/folders';
 import { initialState, modalReducer } from '@/app/reducers/modalReducer';
+import generateColorFromText from '@/utils/generateColorFromText';
 
 interface PopoverContentProps { 
   deleteHandler: () => void, 
@@ -50,6 +51,7 @@ interface ToolbarProps{
   isFavourite: boolean | undefined;
   tag?: string;
   url?: string;
+  noteTag?: Tag;
   setState?: Dispatch<SetStateAction<Note[] | Folder[]>>;
   folderName?: string;
   setFilterByFavorite?: Dispatch<SetStateAction<boolean>>;
@@ -65,7 +67,8 @@ const Toolbar = (
     isFavourite, 
     setState, 
     folderName, 
-    url, 
+    url,
+    noteTag,
     setFilterByFavorite, 
     setFilterByNoTag, 
     setSortAlphabetically, 
@@ -168,7 +171,7 @@ const Toolbar = (
                 } 
               className='bg-transparent'
               >
-                <i className='ri-bookmark-line'></i>
+               { noteTag ? <i style={{ color: generateColorFromText(noteTag?.name)}} className='ri-bookmark-fill'></i> : <i className='ri-bookmark-line'></i>}
               </button>
             </Tooltip> 
           : null}
