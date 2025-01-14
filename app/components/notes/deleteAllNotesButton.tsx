@@ -5,7 +5,7 @@ import { Button } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
 
 
-const DeleteNote = () => {
+const DeleteAllNotesButton = () => {
   const router = useRouter();
 
   const deleteAllNotesHandler = async() => {
@@ -23,4 +23,4 @@ const DeleteNote = () => {
   )
 }
 
-export default DeleteNote
+export default DeleteAllNotesButton
