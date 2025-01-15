@@ -1,7 +1,7 @@
 import mongoose, { Schema, models, model, Document } from "mongoose";
 
 export interface SharedLink extends Document {
-  _id?: string;
+  _id: string;
   url: string;
   noteId: any;
   createdBy: any;
