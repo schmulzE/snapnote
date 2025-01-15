@@ -39,7 +39,8 @@ export async function createTodo(formData : FormData) {
     revalidatePath('todos');
     return { message: 'Todo created successfully' }
   } catch (error) {
-    return { message: 'failed to create todo' };
+    //return { message: 'failed to create todo' };
+    throw new Error('An error occured when creating todo. Please try again');
   }
 }
 
@@ -64,8 +65,8 @@ export async function editTodo(id: string, formData: FormData ) {
   })
 
   if(!parse.success) {
-    console.log(parse.error)
-    return { message: 'data is not valid' };
+    // return { message: 'data is not valid' };
+    throw new Error('data is not valid');
   }
 
   const data = parse.data;
@@ -76,7 +77,8 @@ export async function editTodo(id: string, formData: FormData ) {
     });
     revalidatePath('todos');
   } catch (error) {
-    return { message: 'failed to create todo' };
+    // return { message: 'failed to edit todo' };
+    throw new Error('An error occured when trying to edit todo');
   }
 }
 
@@ -91,19 +93,21 @@ export async function toggleTodo(id: string, completed: boolean ) {
   })
 
   if(!parse.success) {
-    console.log(parse.error)
-    return { message: 'data is not valid' };
+    // return { message: 'data is not valid' };
+    throw new Error('data is not valid');
   }
 
   const data = parse.data;
   try {
     await connectMongoDB();
-    const todo = await TodoModel.findByIdAndUpdate(id, {
+    await TodoModel.findByIdAndUpdate(id, {
       ...data,
     });
     revalidatePath('todos');
   } catch (error) {
-    return { message: 'failed to create todo' };
+    // return { message: 'failed to toggle todo' };
+    throw new Error('An error occured when trying to toggle todo');
+
   }
 }
 
@@ -117,6 +121,7 @@ export const deleteTodo = async(id: string) => {
   revalidatePath('/todos');
 
   } catch (error) {
-    return { message: 'failed to delete todo' };
+    // return { message: 'failed to delete todo' };
+    throw new Error('An error occured while trying to delete todo');
   }
 }
