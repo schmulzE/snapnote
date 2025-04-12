@@ -21,15 +21,16 @@ export default function SignUpPage() {
     return result
   }
 
-  const [state, formAction] = useFormState(handleCreateUser, { message: '', success: false })
+  const [state, formAction] = useFormState(handleCreateUser, null)
 
   useEffect(() => {
+    if (!state) return;
     if(state.success) {
       toast.success(state.message)
     }else {
       toast.error(state.message)
     }
-  }, [state.message, state.success]);
+  }, [state, state?.message, state?.success]);
 
 
 

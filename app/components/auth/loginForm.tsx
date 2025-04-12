@@ -86,7 +86,7 @@ export default function LoginPage() {
         </CardBody>
           <div className="text-sm text-center my-4">
             Don&apos;t have an account?{' '}
-            <Link href="/signup" className="text-purple-600 hover:underline">
+            <Link href="/register" className="text-purple-600 hover:underline">
               Sign up
             </Link>
           </div>
