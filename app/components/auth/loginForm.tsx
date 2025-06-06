@@ -2,10 +2,10 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import logo from '@/public/logo-black.svg';
-import Image from 'next/image';
+import { toast } from 'sonner';
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { PenTool } from 'lucide-react';
 import { Button, Input, Card, CardHeader, CardBody } from "@nextui-org/react"
 
 export default function LoginPage() {
@@ -15,37 +15,54 @@ export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
-  const handleSubmit = async(e: React.FormEvent) => {
-    e.preventDefault()
-    try {
-      setLoading(true);
-      const res = await signIn("credentials", {
-        email,
-        password,
-        redirect: true,
-      });
+    const handleSubmit = async(e: React.FormEvent) => {
+      e.preventDefault()
+      try {
+        setLoading(true);
+        const res = await signIn("credentials", {
+          email,
+          password,
+          redirect: false, // Disable automatic redirect
+        });
 
-      if (res?.error) {
+        if (res?.error) {
+          // Show specific error messages based on the error
+          if (res.error === "Email not found") {
+            toast.error("Email not found. Please check your email or sign up.");
+          } else if (res.error === "Incorrect password") {
+            toast.error("Incorrect password. Please try again.");
+          } else {
+            toast.error("Invalid credentials. Please try again.");
+          }
+          setLoading(false);
+          return;
+        }
+
+        // If no error, redirect manually
         setLoading(false);
-        setError("Invalid Credentials");
-        return;
+        router.replace("notes");
+      } catch (error) {
+        console.log(error);
+        toast.error("An unexpected error occurred. Please try again.");
+        setLoading(false);
       }
-
-      setLoading(false);
-      router.replace("notes");
-    } catch (error) {
-      console.log(error);
     }
-  }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-100 px-4 py-12 sm:px-6 lg:px-8">
+    <div className="flex min-h-screen items-center justify-center bg-gray-100 px-4 py-12 sm:px-6 lg:px-8 font-mono">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1 flex-col">
-          <div className="flex items-center justify-center">
+          {/* <div className="flex items-center justify-center">
             <Image src={logo} alt={'snapnote logo'} width={100}/>
+          </div> */}
+          <div className="flex items-center space-x-2">
+            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+              <PenTool className="w-5 h-5 text-white" />
+            </div>
+            <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              snapnote
+            </span>
           </div>
           <h2 className="text-2xl font-bold text-center">Log in to SnapNote</h2>
           <div className="text-center text-xs">
@@ -81,7 +98,12 @@ export default function LoginPage() {
               type={isVisible ? "text" : "password"}
             />
             </div>
-            <Button type="submit" isLoading={loading} className="w-full bg-black text-white ">Log in</Button>
+            <Button 
+            type="submit" 
+            isLoading={loading} 
+            className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 py-3 hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl text-white "
+            >Log in
+            </Button>
           </form>
         </CardBody>
           <div className="text-sm text-center my-4">
