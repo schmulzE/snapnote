@@ -20,7 +20,7 @@ export default function App({children, isOpen, onClose, title, size = "xs" } : M
         size={size} 
         isOpen={isOpen} 
         onClose={onClose}
-        className="z-50" 
+        className="z-50 font-mono" 
       >
         <ModalContent>
           {(onClose) => (

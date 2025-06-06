@@ -20,6 +20,7 @@ function FilterComponent({ setFilterByFavorite, setFilterByNoTag } : filterProp)
       selectionMode="multiple"
       selectedKeys={selectedKeys}
       onSelectionChange={setSelectedKeys}
+      className="font-mono"
       >
         <ListboxItem 
         key="tag" 

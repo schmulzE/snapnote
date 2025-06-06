@@ -20,6 +20,7 @@ function SortComponent({setState, setSortAlphabetically, setSortByDate} : SortPr
       aria-label="Actions"
       selectionMode="multiple"
       selectedKeys={selectedKeys}
+      className="font-mono"
       onSelectionChange={setSelectedKeys}
       >
         <ListboxItem key="alphabetically" onPress={() => setSortAlphabetically(prevState => !prevState)}>Sort Alphabetically </ListboxItem>

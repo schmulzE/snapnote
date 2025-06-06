@@ -33,7 +33,7 @@ function PopoverContent({deleteHandler, isFavourite, toggleFavourite} : PopoverC
 
   return (
     <ListboxWrapper>
-      <Listbox aria-label="Actions">
+      <Listbox aria-label="Actions" className="font-mono">
         <ListboxItem key="favourites" onPress={toggleFavourite}>
           {isFavourite ? 'Remove from favourite' : 'Add to favourite'}
         </ListboxItem>

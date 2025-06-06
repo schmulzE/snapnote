@@ -1,4 +1,3 @@
-console.log("NEXTAUTH_SECRET:", process.env.NEXTAUTH_SECRET);
 import { connectMongoDB } from "@/lib/mongodb";
 import User from "@/models/user";
 import CredentialsProvider from "next-auth/providers/credentials";

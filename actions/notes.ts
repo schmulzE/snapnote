@@ -105,6 +105,9 @@ export async function getNotes(page: number = 1, limit: number = 9) {
     await connectMongoDB();
 
     const session = await getServerSession(authOptions);
+
+    console.log("getNotes - session:", JSON.stringify(session, null, 2));
+    console.log("getNotes - session?.user.id:", session?.user?.id);
     
     if (!session?.user.id) {
       throw new Error("Unauthorized");
