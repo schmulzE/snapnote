@@ -50,7 +50,9 @@ export const useNotesViewer = (fetchNotes: FetchNotesFunction, tagSlug?: string,
     if (observer.current) observer.current.disconnect();
     
     observer.current = new IntersectionObserver(entries => {
+      console.log("IntersectionObserver callback - entries:", entries); // New log
       if (entries[0].isIntersecting && hasMore) {
+        console.log("IntersectionObserver callback - intersecting and hasMore, setting page."); // New log
         setPage(prev => prev + 1);
       }
     });
@@ -59,8 +61,10 @@ export const useNotesViewer = (fetchNotes: FetchNotesFunction, tagSlug?: string,
   }, [isLoading, hasMore]);
 
   useEffect(() => {
+    console.log("useNotesViewer useEffect - running. initialLoadRef.current:", initialLoadRef.current, "page:", page);
     if (!initialLoadRef.current) {
       initialLoadRef.current = true;
+      console.log("useNotesViewer useEffect - skipping initial load and returning");
       return;
     }
 
