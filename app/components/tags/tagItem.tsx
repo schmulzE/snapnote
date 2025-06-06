@@ -22,7 +22,7 @@ const TagItem = ({tag} : {tag: Tag}) => {
   return (
     <li 
     key={tag._id} 
-    className='flex items-center justify-between group' 
+    className='flex items-center justify-between group font-mono' 
     >
       <Link 
       href={'/tags/' + tag.name} 

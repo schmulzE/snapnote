@@ -23,13 +23,13 @@ export const authOptions: AuthOptions = {
           const user = await User.findOne({ email });
 
           if (!user) {
-            return null;
+            throw new Error("Email not found");
           }
 
           const passwordsMatch = await bcrypt.compare(password, user.password);
 
           if (!passwordsMatch) {
-            return null;
+           throw new Error("Incorrect password");
           }
 
           return user;

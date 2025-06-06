@@ -118,7 +118,7 @@ const Toolbar = (
 
   return (
     <>
-      <div className="flex justify-between px-0 lg:px-4 items-center capitalize my-3">
+      <div className="flex justify-between px-0 lg:px-4 items-center capitalize my-3 font-mono">
         <div className='flex items-center gap-2'>
           <ToggleSidebarButton/>
           <h1 className='text-xl lg:text-4xl font-bold capitalize'>{title}</h1>

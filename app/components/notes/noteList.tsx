@@ -24,7 +24,7 @@ const NoteList = ({ notes, folderId, lastNoteElementRef, deleteNoteHandler, togg
   return (
     <>
     {isMobile && <SearchInput/>}
-      <ul className='grid grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-y-4 gap-x-6 lg:gap-x-2 p-2 lg:p-4 mt-2 lg:mt-0'>
+      <ul className='grid grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-y-4 gap-x-6 lg:gap-x-2 p-2 lg:p-4 mt-2 lg:mt-0 font-mono'>
         {notes.map((note, index) => (
           <NoteItem 
           key={note._id} 

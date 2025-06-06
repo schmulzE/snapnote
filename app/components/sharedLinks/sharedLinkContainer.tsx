@@ -73,7 +73,7 @@ export default function App({sharedLinks}: {sharedLinks: SharedLink[]}) {
 
   return (
     <>
-      <div className='flex justify-between items-center'>
+      <div className='flex justify-between items-center font-mono'>
         <div>Shared links</div>
         <Button 
         onClick={() => openModal('Shared Links', 

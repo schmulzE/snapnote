@@ -12,7 +12,7 @@ const Layout = async({children} : {children : ReactNode}) => {
 
   return (
     <SidebarProvider>
-      <div className='flex h-screen w-full z-50 overflow-hidden'>
+      <div className='flex h-screen w-full z-50 overflow-hidden font-mono'>
         <Sidebar tags={JSON.parse(JSON.stringify(tags))}/>
         <div className='w-full px-4 overflow-auto'>
         <ThemeProvider>

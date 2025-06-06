@@ -12,7 +12,7 @@ const Sidebar =  ({ tags }: { tags: Tag[]}) => {
 
   const sidebarContent = (
     <div 
-    className='overflow-y-auto h-full [&::-webkit-scrollbar]:w-2
+    className='font-mono overflow-y-auto h-full [&::-webkit-scrollbar]:w-2
   [&::-webkit-scrollbar-track]:bg-gray-100
   [&::-webkit-scrollbar-thumb]:bg-gray-300
   dark:[&::-webkit-scrollbar-track]:bg-neutral-700

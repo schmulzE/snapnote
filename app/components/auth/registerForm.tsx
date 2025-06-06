@@ -1,12 +1,12 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { toast } from 'sonner';
 import { useFormState } from 'react-dom'
+import { useEffect, useState } from 'react'
 import { createUser } from '@/actions/auth'
 import { useRouter } from 'next/navigation'
 import SubmitButton from '../ui/submitButton'
 import { Card, CardBody, CardHeader, Input, Link } from "@nextui-org/react"
-import { toast } from 'sonner';
 
 export default function SignUpPage() {
   const [isVisible, setIsVisible] = useState(false)
@@ -35,7 +35,7 @@ export default function SignUpPage() {
 
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 py-12 px-4 sm:px-6 lg:px-8 font-mono">
       <Card className="w-full max-w-md bg-background">
         <CardHeader className="flex flex-col items-center pb-0">
           <h2 className="text-2xl font-bold text-center">Create your account</h2>
@@ -72,7 +72,11 @@ export default function SignUpPage() {
               }
               type={isVisible ? "text" : "password"}
             />
-            <SubmitButton text='Sign up' color={undefined} className="text-white w-full font-bold cursor-pointer bg-black"/>
+            <SubmitButton 
+            text='Sign up' 
+            color={undefined} 
+            className="w-full font-bold cursor-pointer bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white py-3 hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
+            />
           </form>
         </CardBody>
         <p className="my-4 text-center text-sm text-gray-600">
