@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { Badge } from '../ui/badge';
-import { Zap, Link, ArrowRight, Tag, Heart, CheckSquare, Star, FolderOpen, Plus } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Zap, ArrowRight, Tag, Heart, CheckSquare, Star, FolderOpen, Plus } from 'lucide-react';
 
 
 const HeroSection = () => {
