@@ -297,7 +297,10 @@ export async function getFavouriteNotes(page: number = 1, limit: number = 9) {
     .limit(limit)
     .lean()
 
-    const totalNotes = await NoteModel.countDocuments({ createdBy: session.user.id })
+    const totalNotes = await NoteModel.countDocuments({ 
+      createdBy: session.user.id,
+      favourite: true 
+    })
 
     return {
       notes: JSON.parse(JSON.stringify(notes)),
