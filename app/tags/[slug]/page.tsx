@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
-import { getTaggedNotes } from '@/actions/notes';
-import NoteViewer from '@/app/components/notes/notesViewer';
+import { getNotesByTag } from '@/actions/notes';
+import NotesFetcher from '@/app/components/notes/notesFetcher';
 
 
 const Page = async ({ params } : { params: { slug: string } }) => {
@@ -8,7 +8,7 @@ const Page = async ({ params } : { params: { slug: string } }) => {
   return (
     <>
       <Suspense fallback={<div>Loading...</div>}>
-        <NoteViewer fetchNotes={getTaggedNotes} tagSlug={params.slug} title={`${params.slug} tag`}/>
+        <NotesFetcher fetchFunction={getNotesByTag} title={`${params.slug} tag`} tagSlug={params.slug} />
       </Suspense>
     </>
   )

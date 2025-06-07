@@ -1,7 +1,7 @@
 import { Suspense } from 'react';
 import { Spinner } from '@nextui-org/react';
-import { searchNotes } from '@/actions/notes';
-import NotesViewer from '@/app/components/notes/notesViewer';
+import { getNotesBySearch } from '@/actions/notes';
+import NotesFetcher from '@/app/components/notes/notesFetcher';
 
 const Page = async ({ params } : { params: { slug: string } }) => {
 
@@ -14,7 +14,7 @@ const Page = async ({ params } : { params: { slug: string } }) => {
       </div>
       }
       >
-        <NotesViewer fetchNotes={searchNotes} title={'Search Result'} query={params.slug}/>
+        <NotesFetcher fetchFunction={getNotesBySearch} title={'Search Result'} query={params.slug}/>
       </Suspense>
     </>
   )

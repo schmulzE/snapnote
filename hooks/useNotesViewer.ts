@@ -6,34 +6,46 @@ import { toast } from 'sonner';
 import { Note } from '@/models/note';
 import { addNoteToFavourite, deleteNote } from '@/actions/notes';
 
-type GetAllNotesFunction = (page: number, limit?: number) => Promise<{
-  notes: any;
-  hasMore: boolean;
-  totalNotes: number;
-}>;
-type GetNotesByFolderFunction = (page: number, limit: number | undefined, folderId: string) => Promise<{
-  notes: any;
-  hasMore: boolean;
-  totalNotes: number;
-}>;
-type GetNotesByTagFunction = (page: number, limit: number | undefined, tagSlug: string) => Promise<{
-  notes: any;
-  hasMore: boolean;
-  totalNotes: number;
-}>;
-type GetNotesBySearchFunction = (page: number, limit: number | undefined, query: string) => Promise<{
-  notes: any;
-  hasMore: boolean;
-  totalNotes: number;
-}>;
+// type GetAllNotesFunction = (page: number, limit?: number) => Promise<{
+//   notes: any;
+//   hasMore: boolean;
+//   totalNotes: number;
+// }>;
+// type GetNotesByFolderFunction = (page: number, limit: number | undefined, folderId: string) => Promise<{
+//   notes: any;
+//   hasMore: boolean;
+//   totalNotes: number;
+// }>;
+// type GetNotesByTagFunction = (page: number, limit: number | undefined, tagSlug: string) => Promise<{
+//   notes: any;
+//   hasMore: boolean;
+//   totalNotes: number;
+// }>;
+// type GetNotesBySearchFunction = (page: number, limit: number | undefined, query: string) => Promise<{
+//   notes: any;
+//   hasMore: boolean;
+//   totalNotes: number;
+// }>;
 
-type FetchNotesFunction = GetAllNotesFunction | GetNotesByFolderFunction | GetNotesByTagFunction | GetNotesBySearchFunction;
+// type FetchNotesFunction = GetAllNotesFunction | GetNotesByFolderFunction | GetNotesByTagFunction | GetNotesBySearchFunction;
 
-export const useNotesViewer = (fetchNotes: FetchNotesFunction, tagSlug?: string, folderId?: string, query?: string) => {
+export const useNotesViewer = (
+  InitialData: { notes: any; hasMore: boolean; totalNotes: number }, 
+  fetchMoreNotes?: (
+    page: number, 
+    limit?: number, 
+    additionalParam?: string
+  ) => Promise<{
+    notes: any;
+    hasMore: boolean;
+    totalNotes: number;
+  }>,
+  additionalParam?: string
+) => {
   const router = useRouter();
-  const [notes, setNotes] = useState<Note[]>([]);
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
+  const [notes, setNotes] = useState<Note[]>(InitialData?.notes);
+  const [page, setPage] = useState(2);
+  const [hasMore, setHasMore] = useState(InitialData?.hasMore);
   const [isLoading, setIsLoading] = useState(false);
   const [filters, setFilters] = useState({
     favorite: false,
@@ -42,7 +54,6 @@ export const useNotesViewer = (fetchNotes: FetchNotesFunction, tagSlug?: string,
     alphabetically: false
   });
 
-  const initialLoadRef = useRef(false);
   const observer = useRef<IntersectionObserver | null>(null);
 
   const lastNoteElementRef = useCallback((node: HTMLLIElement | null) => {
@@ -50,9 +61,7 @@ export const useNotesViewer = (fetchNotes: FetchNotesFunction, tagSlug?: string,
     if (observer.current) observer.current.disconnect();
     
     observer.current = new IntersectionObserver(entries => {
-      console.log("IntersectionObserver callback - entries:", entries); // New log
       if (entries[0].isIntersecting && hasMore) {
-        console.log("IntersectionObserver callback - intersecting and hasMore, setting page."); // New log
         setPage(prev => prev + 1);
       }
     });
@@ -61,50 +70,31 @@ export const useNotesViewer = (fetchNotes: FetchNotesFunction, tagSlug?: string,
   }, [isLoading, hasMore]);
 
   useEffect(() => {
-    console.log("useNotesViewer useEffect - running. initialLoadRef.current:", initialLoadRef.current, "page:", page);
-    if (!initialLoadRef.current) {
-      initialLoadRef.current = true;
-      console.log("useNotesViewer useEffect - skipping initial load and returning");
-      return;
-    }
+    if (page === 1) return; // Skip initial load
 
-    let mounted = true;
-
-    const loadNotes = async () => {
-      if (isLoading) return;
+    const loadMoreNotes = async () => {
+      if (!fetchMoreNotes || isLoading) return;
       setIsLoading(true);
-
+      
       try {
-        let result: any;
-        if (tagSlug) {
-          result = await (fetchNotes as GetNotesByTagFunction)(page, undefined, tagSlug);
-        } else if (folderId) {
-          result = await (fetchNotes as GetNotesByFolderFunction)(page, undefined, folderId);
-        } else if (query) {
-          result = await (fetchNotes as GetNotesBySearchFunction)(page, undefined, query);
-        } else {
-          result = await (fetchNotes as GetAllNotesFunction)(page, undefined);
-        }
-        if (mounted) {
-          setNotes(prev => [...prev, ...result.notes]);
-          setHasMore(result.hasMore);
-        }
+        const result = await fetchMoreNotes(
+          page, 
+          9, // default limit
+          additionalParam
+        );
+        
+        setNotes(prev => [...prev, ...result.notes]);
+        setHasMore(result.hasMore);
       } catch (error) {
-        console.error('Error fetching notes:', error);
+        console.error('Error fetching more notes:', error);
+        toast.error('Failed to load more notes');
       } finally {
-        if (mounted) {
-          setIsLoading(false);
-        }
+        setIsLoading(false);
       }
     };
 
-    loadNotes();
-
-    return () => {
-      mounted = false;
-    };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, fetchNotes, tagSlug, folderId, query]);
+    loadMoreNotes();
+  }, [page, fetchMoreNotes, additionalParam, isLoading]);
 
   const processedNotes = notes.filter(note => {
     if (filters.favorite && !note.favourite) return false;

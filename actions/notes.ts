@@ -311,7 +311,7 @@ export async function getFavouriteNotes(page: number = 1, limit: number = 9) {
 }
 
 
-export const getTaggedNotes = async(page: number = 1, limit: number = 9, params?: string) => {
+export const getNotesByTag = async(page: number = 1, limit: number = 9, params?: string) => {
   try {
     await connectMongoDB();
 
@@ -362,7 +362,7 @@ export const getTaggedNotes = async(page: number = 1, limit: number = 9, params?
 }
 
 
-export const getNoteByFolderId = async (page: number = 1, limit: number = 9, folderId?: string) => {
+export const getNotesByFolderId = async (page: number = 1, limit: number = 9, folderId?: string) => {
   try {
 
     if (!folderId) {
@@ -460,7 +460,7 @@ export const getNoteByFolderId = async (page: number = 1, limit: number = 9, fol
   }
 };
 
-export const searchNotes = async (page: number = 1, limit: number = 9, query: string) => {
+export const getNotesBySearch = async (page: number = 1, limit: number = 9, query: string | undefined) => {
   try {
     if (!query) {
       throw new Error("Query is required.");
@@ -535,7 +535,7 @@ export const searchNotes = async (page: number = 1, limit: number = 9, query: st
     return {
       notes: JSON.parse(JSON.stringify(notes)),
       hasMore: total > skip + notes.length,
-      totalNotes: total
+      totalNotes: total as number
     };
 
   } catch(error: any) {

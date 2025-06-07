@@ -1,15 +1,15 @@
 import React from 'react';
 import { getFolder } from '@/actions/folders';
-import { getNoteByFolderId } from '@/actions/notes';
-import NotesViewer from '@/app/components/notes/notesViewer';
+import { getNotesByFolderId } from '@/actions/notes';
+import NotesFetcher from '@/app/components/notes/notesFetcher';
 
 
 const Page = async ({ params } : { params : {id : string} }) => {
 
-  const folder = await getFolder(params.id)
+  const folder = await getFolder(params.id);
   return (
     <>
-      <NotesViewer title={'folders'} fetchNotes={getNoteByFolderId} folderName={folder.name} folderId={params.id} />
+      <NotesFetcher title={'folders'} fetchFunction={getNotesByFolderId} folderName={folder.name} folderId={params.id} />
     </>
   )
 }
