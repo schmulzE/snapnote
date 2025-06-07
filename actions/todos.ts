@@ -27,7 +27,6 @@ export async function createTodo(formData : FormData) {
   });
 
   if(!parse.success) {
-    console.log(parse.error)
     return { message: 'data is not valid' };
   }
 

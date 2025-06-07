@@ -33,7 +33,6 @@ export default function ShareNoteForm({ noteId, url: initialUrl }: ShareFormProp
       }
     } catch (error) {
       toast.error('An unexpected error occurred while creating the link');
-      console.error('Share link creation error:', error);
     } finally {
       setIsLoading(false);
     }
@@ -55,7 +54,6 @@ export default function ShareNoteForm({ noteId, url: initialUrl }: ShareFormProp
         toast.success('Link copied to clipboard');
       } catch (fallbackError) {
         toast.error('Failed to copy link');
-        console.error('Clipboard copy error:', fallbackError);
       }
     }
   };

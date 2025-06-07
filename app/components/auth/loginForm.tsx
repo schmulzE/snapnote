@@ -43,7 +43,6 @@ export default function LoginPage() {
         setLoading(false);
         router.replace("notes");
       } catch (error) {
-        console.log(error);
         toast.error("An unexpected error occurred. Please try again.");
         setLoading(false);
       }

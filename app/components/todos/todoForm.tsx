@@ -33,7 +33,6 @@ const TodoForm = ({ todo, onClose }: { todo?: Todo, onClose?: () => void }) => {
   useEffect(() => {
     const initializeForm = async () => {
       if (EDITMODE && todo) {
-        console.log(todo)
         setFormData({ ...todo });
         setValue(parseDate(todo.dueDate!));
       }

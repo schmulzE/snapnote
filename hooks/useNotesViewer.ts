@@ -86,7 +86,6 @@ export const useNotesViewer = (
         setNotes(prev => [...prev, ...result.notes]);
         setHasMore(result.hasMore);
       } catch (error) {
-        console.error('Error fetching more notes:', error);
         toast.error('Failed to load more notes');
       } finally {
         setIsLoading(false);

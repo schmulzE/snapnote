@@ -15,7 +15,6 @@ export async function POST(req: Request) {
     try {
       await connectMongoDB();
     } catch (error) {
-      console.error("Database connection error:", error);
       return Response.json(
         { error: "Failed to connect to database" },
         { status: 500 }
@@ -55,7 +54,6 @@ export async function POST(req: Request) {
 
       return Response.json({ user }, { status: 200 });
     } catch (error) {
-      console.error("Database query error:", error);
       return Response.json(
         { error: "Failed to fetch user data" },
         { status: 500 }
@@ -63,7 +61,6 @@ export async function POST(req: Request) {
     }
 
   } catch (error) {
-    console.error("Unexpected error:", error);
     return Response.json(
       { error: "Internal server error" },
       { status: 500 }

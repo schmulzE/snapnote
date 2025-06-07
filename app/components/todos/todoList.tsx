@@ -33,7 +33,7 @@ const Todos: React.FC<TodosProps> = ({ todos }) => {
       );
       await toggleTodo(id, !completed);
     } catch (error) {
-      console.error(error);
+      throw new Error('An error occurred while toggling the todo');
     }
 
     router.refresh();

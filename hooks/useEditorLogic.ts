@@ -143,7 +143,7 @@ export const useEditorLogic = ({ initialContent, noteId, folderId, editable }: R
         editorRef.current?.chain().focus().setImage({ src: imageUrl }).run();
       } catch (error) {
         if (error instanceof Error) {
-          console.log(error.message);
+          throw error;
         }
       } finally {
         input.removeAttribute('disabled');

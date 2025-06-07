@@ -34,7 +34,6 @@ export const authOptions: AuthOptions = {
 
           return user;
         } catch (error) {
-          console.log("Error: ", error);
           throw new Error("An error occurred while trying to sign in");
         }
       },
