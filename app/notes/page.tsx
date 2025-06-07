@@ -1,6 +1,5 @@
-"use server";
-export const dynamic = 'force-dynamic';
 import { Suspense } from 'react';
+export const dynamic = 'force-dynamic';
 import { getNotes } from '@/actions/notes';
 import { Spinner } from '@nextui-org/react';
 import NotesFetcher from '@/app/components/notes/notesFetcher'
