@@ -1,12 +1,12 @@
 import React from 'react';
 import { getFavouriteNotes } from '@/actions/notes';
-import NoteViewer from '@/app/components/notes/notesViewer';
+import NotesFetcher from '../components/notes/notesFetcher';
 
 const pages = async() => {
 
   return (
     <>
-      <NoteViewer fetchNotes={getFavouriteNotes} title={'favourites'}/>
+      <NotesFetcher fetchFunction={getFavouriteNotes} title={'favourites'}/>
     </>
   )
 }
