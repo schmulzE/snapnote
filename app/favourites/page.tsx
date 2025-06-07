@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import React, { Suspense } from 'react';
 import { Spinner } from '@nextui-org/react';
 import { getFavouriteNotes } from '@/actions/notes';
