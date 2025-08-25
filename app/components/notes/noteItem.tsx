@@ -29,7 +29,7 @@ interface NoteItemProps {
       <button className='absolute top-4 right-2 hidden lg:block'><i className='ri-pencil-line text-slate-500'></i></button>
       <Link href={`/notes/${note._id}`} className={`block p-2 space-y-2 w-full h-full ${isActive ? 'bg-gray-200 p-1 rounded' : ''}`}>
         <h6 className='text-md font-bold line-clamp-2'>{ title?.trim() }</h6>
-        <div className='text-xs'>{ formatDate(note.createdAt!) }</div>
+        <div className='text-xs line-clamp-2'>{ formatDate(note.createdAt!) }</div>
         <div className="text-sm line-clamp-3">{ parse(note.content) }</div>
       </Link>
       <div className="flex absolute bottom-0 left-0 w-full justify-between px-4 py-2 text-slate-500 text-lg">

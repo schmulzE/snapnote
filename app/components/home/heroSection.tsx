@@ -29,11 +29,11 @@ const HeroSection = () => {
 
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 mb-6 leading-tight">
                 Your thoughts,{" "}
-                <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                <span className="inline bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                   organized
                 </span>{" "}
                 and{" "}
-                <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                <span className="inline bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
                   actionable
                 </span>
               </h1>

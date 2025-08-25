@@ -15,7 +15,7 @@ export default function AppNavbar() {
               <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
                 <PenTool className="w-5 h-5 text-white" />
               </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              <span className="inline-block text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 snapnote
               </span>
             </div>
@@ -66,7 +66,7 @@ export default function AppNavbar() {
                 </Link>
                 <div className="flex flex-col space-y-2 pt-4">
                   <Link href="/login">Sign In</Link>
-                  <Link href="/register" className="bg-gradient-to-r p-1 rounded text-white from-blue-500 to-purple-600">Get Started</Link>
+                  <Link href="/register" className="bg-gradient-to-r p-2 rounded text-white from-blue-500 to-purple-600">Get Started</Link>
                 </div>
               </nav>
             </div>
